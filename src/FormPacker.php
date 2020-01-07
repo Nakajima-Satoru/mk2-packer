@@ -378,24 +378,54 @@ class FormPackerUI extends FormPacker{
 
 		$names=explode(".",$name);
 
+		$dataType=gettype($getData);
+
 		if(count($names)==1){
-			if(!empty($getData[$names[0]])){
-				return $getData[$names[0]];
+			if($dataType=="object"){
+				if(!empty($getData->{$names[0]})){
+					return $getData->{$names[0]};
+				}	
+			}
+			else if($dataType=="array"){
+				if(!empty($getData[$names[0]])){
+					return $getData[$names[0]];
+				}	
 			}
 		}
 		else if(count($names)==2){
-			if(!empty($getData[$names[0]][$names[1]])){
-				return $getData[$names[0]][$names[1]];
+			if($dataType=="object"){
+				if(!empty($getData->{$names[0]}->{$names[1]})){
+					return $getData->{$names[0]}->{$names[1]};
+				}
+			}
+			else if($dataType=="array"){
+				if(!empty($getData[$names[0]][$names[1]])){
+					return $getData[$names[0]][$names[1]];
+				}
 			}
 		}
 		else if(count($names)==3){
-			if(!empty($getData[$names[0]][$names[1]][$names[2]])){
-				return $getData[$names[0]][$names[1]][$names[2]];
+			if($dataType=="object"){
+				if(!empty($getData->{$names[0]}->{$names[1]}->{$names[2]})){
+					return $getData->{$names[0]}->{$names[1]}->{$names[2]};
+				}
+			}
+			else if($dataType=="array"){
+				if(!empty($getData[$names[0]][$names[1]][$names[2]])){
+					return $getData[$names[0]][$names[1]][$names[2]];
+				}	
 			}
 		}
 		else if(count($names)==4){
-			if(!empty($getData[$names[0]][$names[1]][$names[2]][$names[3]])){
-				return $getData[$names[0]][$names[1]][$names[2]][$names[3]];
+			if($dataType=="object"){
+				if(!empty($getData->{$names[0]}->{$names[1]}->{$names[2]}->{$names[3]})){
+					return $getData->{$names[0]}->{$names[1]}->{$names[2]}->{$names[3]};
+				}
+			}
+			else if($dataType=="array"){
+				if(!empty($getData[$names[0]][$names[1]][$names[2]][$names[3]])){
+					return $getData[$names[0]][$names[1]][$names[2]][$names[3]];
+				}
 			}
 		}
 
