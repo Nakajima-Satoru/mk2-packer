@@ -1,0 +1,19 @@
+{
+	"name":"mk2/packer",
+	"description": "Simple PHP Framework 'mk2' Standard Packer available.",
+	"type": "library",
+	"license": "MIT",
+	"authors": [{
+		"name": "Nakajima Satoru",
+		"email": "info@mk2-php.com"
+	}],
+	"keywords": ["PHP","Framework","mk2","Web","Packer","Standard"],
+	"require": {
+		"php": ">=5.4.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"mk2\\packer\\":"src/"
+		}
+	}
+}
