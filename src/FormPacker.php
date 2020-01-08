@@ -19,18 +19,50 @@ class FormPacker extends Packer{
 	public static $tokenSalt="4049far3afjie7ep02Aar09f0g098a6r005hjFuf";
 	public static $errorMessage=[];
 
+	# setErrors
+	
 	public function setErrors($data){
 		self::$errorMessage=$data;
 	}
 
+	# setToken
+	
 	public function setToken($tokenSalt){
 		self::$tokenSalt=$tokenSalt;				
 		return $this;
 	}
+
+	# verify
+
 	public function verify(){
 		
-		return false;
+		if(empty(Request::$post["__token"])){
+			return false;
+		}
 
+		$targetToken=Request::$post["__token"];
+
+		$ref=getallheaders();
+
+		if(!empty($ref["referer"])){
+			$referer=$ref["referer"];
+		}
+		else if(!empty($ref["Referer"])){
+			$referer=$ref["Referer"];
+		}
+
+		if(empty($referer)){
+			return false;
+		}
+
+
+		$targetToken2=hash("sha256",self::$tokenSalt.$referer);
+		
+		if($targetToken!=$targetToken2){
+			return false;
+		}
+
+		return true;
 	}
 }
 class FormPackerUI extends FormPacker{
@@ -307,6 +339,24 @@ class FormPackerUI extends FormPacker{
 
 	public function setToken($option=null){
 
+		$url=Request::$params["url"];
+		$url=Request::$params["domain"].$url;
+		if(Request::$params["option"]["port"]==443){
+			$url="https://".$url;
+		}
+		else{
+			$url="http://".$url;
+		}
+		$token=hash("sha256",self::$tokenSalt.$url);
+		return $token;
+	}
+
+	
+	# setTokenHidden
+
+	public function setTokenHidden($option=null){
+		$option["value"]=$this->setToken();
+		return $this->setHidden("__token",$option);
 	}
 
 	# setFile
