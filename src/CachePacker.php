@@ -128,7 +128,7 @@ class CachePacker extends Packer{
 			if(empty($buff["refresh"])){
 
 				if(!empty($buff["limit"])){
-					if(set_strtotime($buff["limit"])>set_strtotime()){
+					if(date_format(date_create($buff["limit"]),"U")>date_format(date_create("now"),"U")){
 						$refreshed=false;
 					}
 				}
