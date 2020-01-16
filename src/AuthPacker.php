@@ -39,10 +39,10 @@ class AuthPacker extends AuthBasePacker{
 			return false;
 		}
 		if(empty($this->dbTable["username"])){
-			return false;
+			$this->dbTable["username"]="username";
 		}
 		if(empty($this->dbTable["password"])){
-			return false;
+			$this->dbTable["password"]="password";
 		}
 		if(empty($post[$this->dbTable["username"]])){
 			return false;
