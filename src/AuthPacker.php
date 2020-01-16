@@ -6,7 +6,7 @@
 
 AuthPacker
 
-A simple authentication component.
+A database table authentication component.
 
 Copylight (C) Nakajima Satoru 2020.
 
@@ -14,128 +14,120 @@ Copylight (C) Nakajima Satoru 2020.
 
 namespace mk2\core;
 
-class AuthPacker extends Packer{
+Import::Packer("AuthBase");
 
-	public $authName="Mk2Auth";
-	public $parityCheckSalt="509fjaoire0e9r0ajfaae0r9gjpoAoriJC";
+class AuthPacker extends AuthBasePacker{
 
-	public $redirect=[
-		"login"=>"@login",
-		"logined"=>"/",
+	public $dbTable=[
+		"table"=>"User",
+		"username"=>"username",
+		"password"=>"password",
+		"addRule"=>null,
+		"fields"=>null,
+		"hash"=>[
+			"algo"=>"sha256",
+			"salt"=>"9f0a90r9eigajifoapeijfaig",
+			"stretch"=>4,
+		],
 	];
-	public $allowList=[];
+	
+	# login
 
-	public function __construct($option){
-		parent::__construct($option);
+	public function login($post,$forceLoginLimitter=false){
 
-		$this->setPacker([
-			"Session",
-		]);
-
-	}
-
-	# convertAuthData
-
-	public function convertAuthData($data){
-
-		$loginDate=date_format(date_create("now"),"Y-m-d H:i:s");
-		$parityCode=hash("sha256",$this->parityCheckSalt.json_encode($data).$loginDate);
-
-		if(gettype($data)=="object"){
-			$data->loginDate=$loginDate;
-			$data->parityCode=$parityCode;
+		if(empty($this->dbTable["table"])){
+			return false;
 		}
-		else if(gettype($data)=="array"){
-			$data["loginDate"]=$loginDate;
-			$data["parityCode"]=$parityCode;
+		if(empty($this->dbTable["username"])){
+			return false;
+		}
+		if(empty($this->dbTable["password"])){
+			return false;
+		}
+		if(empty($post[$this->dbTable["username"]])){
+			return false;
+		}
+		if(empty($post[$this->dbTable["password"]])){
+			return false;
 		}
 
-		return $data;
+		$this->setTable([$this->dbTable["table"]]);
 
-	}
+		$obj=$this->Table->{$this->dbTable["table"]};
 
-	# refresh
+		$params=[
+			"type"=>"first",
+		];
 
-	public function refresh($data,$ChangeParityCode=null){
-		if($ChangeParityCode){
-			$data=$this->convertAuthData($data);
+		$params["where"]=[
+			[$this->dbTable["username"],$post[$this->dbTable["username"]]],
+		];
+
+		// if force Login limitter is "false"...
+		if(empty($forceLoginLimitter)){
+			$pwHash=$this->getPasswordHash($post[$this->dbTable["password"]]);
+			$params["where"][]=[$this->dbTable["password"],$pwHash];
 		}
-		$this->Packer->Session->change_ssid();		
-		$this->Packer->Session->write($this->authName,$data);
-	}
 
-	# loginCheck
-
-	public function loginCheck(){
-
-		if(!empty($this->Packer->Session->read($this->authName))){
-				
-			if($this->_convertUrl(Request::$params["url"])==$this->_convertUrl($this->redirect["login"])){
-				$this->redirect($this->redirect["logined"]);
+		if(is_array($this->dbTable["addRule"])){
+			foreach($this->dbTable["addRule"] as $ar_){
+				$params["where"][]=$ar_;
 			}
-			else{
-
-				$authData=$this->Packer->Session->read($this->authName);
-
-				# parityCheck
-				$buff=$authData;
-				unset($buff["parityCode"],$buff["loginDate"]);
-				$parityCode=hash("sha256",$this->parityCheckSalt.json_encode($buff).$authData["loginDate"]);
-
-				if($parityCode!=$authData["parityCode"]){
-					$this->Packer->Session->delete($this->authName);
-					$this->redirect($this->redirect["login"]);
-				}
-
-				return $authData;
-			}
-
-		}
-		else{
-
-			if($this->_convertUrl(Request::$params["url"])==$this->_convertUrl($this->redirect["login"])){
-
-			}
-			else{
-
-				$jugement=false;
-				if(!empty($this->allowList)){
-					foreach($this->allowList as $a_){
-						if($this->_convertUrl(Request::$params["url"])==$this->_convertUrl($a_)){
-							$jugement=true;
-							break;
-						}
-					}
-				}
-
-				if(!$jugement){
-					$this->redirect($this->redirect["login"]);
-				}
-			}
-
-		}
-	}
-
-	# logout
-
-	public function logout(){
-		$this->Packer->Session->delete($this->authName);
-		$this->Packer->Session->change_ssid();		
-	}
-
-	# (private) _convertUrl
-
-	private function _convertUrl($params){
-
-		$url=$this->getUrl($params);
-		$url=explode("?",$url);
-		$url=$url[0];
-
-		if(substr($url,strlen($url)-1,1)!="/"){
-			$url.="/";
 		}
 
-		return $url;
+		if(!empty($this->dbTable["fields"])){
+			$params["fields"]=$this->dbTable["fields"];
+		}
+		
+		$check=$obj->select($params);
+
+		unset($check->password);
+
+		if(!$check){
+			return false;
+		}
+		else
+		{
+
+			$this->refresh($check);
+			return true;
+
+		}
 
 	}
+
+	# getPasswordHash
+
+	public function getPasswordHash($password){
+
+		$algo="sha256";
+		$stretch=2;
+		$salt="9922001920";
+
+		if(!empty($this->dbTable["hash"]["algo"])){
+			$algo=$this->dbTable["hash"]["algo"];
+		}
+		if(!empty($this->dbTable["hash"]["stretch"])){
+			$stretch=$this->dbTable["hash"]["stretch"];
+		}
+		if(!empty($this->dbTable["hash"]["salt"])){
+			$salt=$this->dbTable["hash"]["salt"];
+		}
+
+		$hash=$password;
+		for($v1=0;$v1<$stretch;$v1++){
+			$hash=hash($algo,$hash);
+		}
+
+		return $hash;
+	}
+
+	# forceLogin
+
+	public function forceLogin($username){
+
+		return $this->login([$this->dbTable["username"]=>$username]);
+		
+	}
+
 }
