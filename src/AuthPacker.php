@@ -69,9 +69,11 @@ class AuthPacker extends AuthBasePacker{
 			$params["where"][]=[$this->dbTable["password"],$pwHash];
 		}
 
-		if(is_array($this->dbTable["addRule"])){
-			foreach($this->dbTable["addRule"] as $ar_){
-				$params["where"][]=$ar_;
+		if(!empty($this->dbTable["addRule"])){
+			if(is_array($this->dbTable["addRule"])){
+				foreach($this->dbTable["addRule"] as $ar_){
+					$params["where"][]=$ar_;
+				}
 			}
 		}
 

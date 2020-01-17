@@ -17,7 +17,11 @@ namespace mk2\core;
 class AuthBasePacker extends Packer{
 
 	public $authName="Mk2Auth";
-	public $parityCheckSalt="509fjaoire0e9r0ajfaae0r9gjpoAoriJC";
+	public $parityCode=[
+		"algo"=>"sha256",
+		"salt"=>"509fjaoire0e9r0ajfaae0r9gjpoAoriJC",
+		"stretch"=>3,
+	];
 
 	public $redirect=[
 		"login"=>"@login",
@@ -39,7 +43,7 @@ class AuthBasePacker extends Packer{
 	public function convertAuthData($data){
 
 		$loginDate=date_format(date_create("now"),"Y-m-d H:i:s");
-		$parityCode=hash("sha256",$this->parityCheckSalt.json_encode($data).$loginDate);
+		$parityCode=$this->_makeParityCode($data,$loginDate);
 
 		return [
 			"loginDate"=>$loginDate,
@@ -82,14 +86,14 @@ class AuthBasePacker extends Packer{
 
 				# parityCheck
 				$buff=$authData["data"];
-				$parityCode=hash("sha256",$this->parityCheckSalt.json_encode($buff).$authData["loginDate"]);
+				$parityCode=$this->_makeParityCode($buff,$authData["loginDate"]);
 
 				if($parityCode!=$authData["parityCode"]){
 					$this->Packer->Session->delete($this->authName);
 					$this->redirect($this->redirect["login"]);
 				}
 
-				return $authData;
+				return $authData["data"];
 			}
 
 		}
@@ -140,4 +144,28 @@ class AuthBasePacker extends Packer{
 		return $url;
 
 	}
+
+	# (private) _makeParityCode
+
+	private function _makeParityCode($data,$loginDate){
+
+		if(empty($this->parityCode["algo"])){
+			$this->parityCode["algo"]="sha256";
+		}
+		if(empty($this->parityCode["salt"])){
+			$this->parityCode["salt"]="f0a9rgjairojfia10fAoidfjAOZiOER097777+a";
+		}
+		if(empty($this->parityCode["stretch"])){
+			$this->parityCode["stretch"]=2;
+		}
+
+		$parityCode=json_encode($data);
+		for($v1=0;$v1<$this->parityCode["stretch"];$v1++){
+			$parityCode=hash($this->parityCode["algo"],$parityCode);
+		}
+
+		return $parityCode;
+
+	}
+
 }
