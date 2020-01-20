@@ -18,6 +18,19 @@ class FormPacker extends Packer{
 
 	public static $tokenSalt="4049far3afjie7ep02Aar09f0g098a6r005hjFuf";
 	public static $errorMessage=[];
+	public static $_cssFramework=null;
+
+	# __construct
+
+	public function __construct($option){
+
+		if(!empty($option["cssFramework"])){
+			self::$_cssFramework=$option["cssFramework"];
+			unset($option["cssFramework"]);
+		}
+
+		parent::__construct($option);
+	}
 
 	# setErrors
 	
@@ -65,10 +78,14 @@ class FormPacker extends Packer{
 		return true;
 	}
 }
+
+/**
+ * FormPackerUI
+ */
 class FormPackerUI extends FormPacker{
 
 	private $method="post";
-	private $cssFramework=null;
+	public $cssFramework=null;
 
 	# start
 
@@ -78,9 +95,19 @@ class FormPackerUI extends FormPacker{
 		if(empty($option["method"])){
 			$option["method"]="post";
 		}
+
 		$this->method=$option["method"];
 		if(!empty($option["cssFramework"])){
 			$this->cssFramework=$option["cssFramework"];
+			unset($option["cssFramework"]);
+		}
+		if(!empty(self::$_cssFramework)){
+			$this->cssFramework=self::$_cssFramework;
+		}
+
+		if(!empty($option["fileUpload"])){
+			$option["enctype"]="multipart/form-data";
+			unset($option["fileUpload"]);
 		}
 
 		$str=$this->_setTagAttribute($str,$option);
@@ -110,7 +137,12 @@ class FormPackerUI extends FormPacker{
 
 		if($option["type"]!="radio" && $option["type"]!="checkbox"){
 			if($this->_requestCheck($name)){
-				$option["value"]=$this->_requestCheck($name);
+				if(empty($option["fixedValue"])){
+					$option["value"]=$this->_requestCheck($name);
+				}
+				else{
+					unset($option["fixedValue"]);
+				}
 			}
 		}
 
@@ -167,8 +199,13 @@ class FormPackerUI extends FormPacker{
 
 		$value="";
 		if(!empty($option["value"])){
-			$value=$option["value"];
-			unset($option["value"]);
+			if(empty($option["fixedValue"])){
+				$value=$option["value"];
+				unset($option["value"]);
+			}
+			else{
+				unset($option["fixedValue"]);
+			}
 		}
 
 		$option["name"]=$name;
@@ -226,9 +263,16 @@ class FormPackerUI extends FormPacker{
 				$opt["value"]=$key;
 				$opt["type"]="radio";
 				$opt["id"]="radio".$name.$key;
-				if($ans==$key){
-					$opt["checked"]=true;				
+
+				if(empty($option["fixedValue"])){
+					if($ans==$key){
+						$opt["checked"]=true;				
+					}
 				}
+				else{
+					unset($option["fixedValue"]);
+				}
+
 				$str.='<div class="radio">';
 				$str.=$this->setInput($name,$opt);
 				$str.='<label for="'.$opt["id"].'">'.$textname.'</label>';
@@ -282,17 +326,22 @@ class FormPackerUI extends FormPacker{
 
 		$str.=">\n";
 
-		if(is_array($values)){
-
-			foreach($values as $key=>$textname){
-				$checked="";
-				if($ans==$key){
-					$checked="selected";
+		if(empty($option["fixedValue"])){
+			if(is_array($values)){
+				foreach($values as $key=>$textname){
+					$checked="";
+					if($ans==$key){
+						$checked="selected";
+					}
+					$str.='<option value="'.$key.'" '.$checked.'>'.$textname.'</option>'."\n";
 				}
-				$str.='<option value="'.$key.'" '.$checked.'>'.$textname.'</option>'."\n";
-			}
 
+			}
 		}
+		else{
+			unset($option["fixedValue"]);
+		}
+
 		$str.="</select>";
 
 		return $str."\n";
@@ -319,9 +368,16 @@ class FormPackerUI extends FormPacker{
 				$opt["value"]=$key;
 				$opt["type"]="checkbox";
 				$opt["id"]="checkbox".$name2;
-				if($ans==$key){
-					$opt["checked"]=true;				
+
+				if(empty($option["fixedValue"])){
+					if($ans==$key){
+						$opt["checked"]=true;				
+					}
 				}
+				else{
+					unset($option["fixedValue"]);
+				}
+
 				$str.='<div class="checkbox">';
 				$str.=$this->setInput($name1,$opt);
 				$str.='<label for="'.$opt["id"].'">'.$textname.'</label>';
@@ -394,10 +450,20 @@ class FormPackerUI extends FormPacker{
 		$str="";
 
 		if($this->cssFramework=="bootstrap"){
-			$str.='<div class="invalid-feedback" style="display:block">';
+			if(!empty(self::$errorMessage[$name])){
+				$str.='<div class="invalid-feedback" style="display:block">';
+			}
+			else{
+				$str.='<div class="invalid-feedback">';
+			}
 		}
 		else{
-			$str.='<div class="error-message">';
+			if(!empty(self::$errorMessage[$name])){
+				$str.='<div class="error-message" style="display:block;">';
+			}
+			else{
+				$str.='<div class="error-message">';
+			}
 		}
 
 		if(!empty(self::$errorMessage[$name])){
