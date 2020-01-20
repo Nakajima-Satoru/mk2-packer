@@ -412,6 +412,7 @@ class FormPackerUI extends FormPacker{
 
 	public function setTokenHidden($option=null){
 		$option["value"]=$this->setToken();
+		$option["fixedValue"]=true;
 		return $this->setHidden("__token",$option);
 	}
 
