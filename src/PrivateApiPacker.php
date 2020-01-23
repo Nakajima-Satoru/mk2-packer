@@ -6,7 +6,7 @@
 
 PrivateApiPacker
 
-It is Backpack which can implement PrivateAPI simply without external release.
+Private-API Access Packer.
 
 Copylight (C) Nakajima Satoru 2020.
 
@@ -16,237 +16,169 @@ namespace mk2\core;
 
 class PrivateApiPacker extends Packer{
 
-	public $ipAllow=true;
-	public $originAllow=true;
+	/**
+	 * option settiongs
+	 * 
+	 * {apiName}=>[
+	 * 
+	 * 		// Request URL
+	 * 		url=>""https://api.xxxxxxx.jp/xxxxxxxxx/",
+	 * 
+	 * 		// Token : For token generation information.
+	 * 		token=>[
+	 * 			"algo"=>"sha512",							// token create algolizum.
+	 * 			"salt"=>"*****************************"",	// token create salt.
+	 * 			"stretch"=>6,								// token create strech count.
+	 * 			"limit"=>30,								// Token expiration date.
+	 * 		],
+	 * 
+	 * 		// Header : Additional request header information.
+	 * 		header=>[
+	 * 			"keyword"=>"abcdefg1234",
+	 * 		],
+	 *
+	 * ],
+	 */
 
-	# (constructor)
-
-	public function __construct(){
-		parent::__construct();
+	public function __construct($option){
+		parent::__construct($option);
 
 		$this->setPacker([
 			"Curl",
 		]);
+
 	}
 
-	# request
+	/**
+	 * access
+	 * 
+	 * @param apiName
+	 * @param addUrl = null
+	 * @param requestData = []
+	 */
+	public function access($apiName,$addUrl=null,$requestData=[]){
 
-	public function request($authName,$url,$option=[]){
+		$getConf=$this->{$apiName};
 
-		$config=$this->{$authName};
+		$url=$getConf["url"].$addUrl;
 
-		if(empty($config["token"]["algo"])){
-			$config["token"]["algo"]="sha256";
+		$headerOption=[];
+
+		if(!empty($getConf["header"])){
+			$headerOption=$getConf["header"];
 		}
 
-		$token=$this->getApiToken($authName);
-		$option["header"]["token"]=$token;
+		// token set
+		$headerOption["token"]=$this->getPrivateToken($apiName);
 
-		$params=array(
-			"url"=>@$config["url"].$url,
-			"method"=>"post",
-			"header"=>@$config["header"],
-			"data"=>@$option["post"],
-			"data_get"=>@$option["get"],
-		);
+		$res=$this->Packer->Curl->accessPost($url,$requestData,null,$headerOption);
 
-		if(!empty($config["header"])){
-			foreach($config["header"] as $key=>$o_){
-				$params["headers"][$key]=$o_;
-			}
-		}
-		if(!empty($option["header"])){
-			foreach($option["header"] as $key=>$o_){
-				$params["headers"][$key]=$o_;
-			}
-		}
-		$res=$this->Packer->Curl->access($params);
 		return $res;
-	}
-
-	# requestGet
-
-	public function requestGet($authName,$url,$getData=[],$headerData=[]){
-
-		$option=[
-			"method"=>"get",
-			"get"=>$getData,
-			"header"=>$headerData,
-		];
-		return $this->request($authName,$url,$option);
 
 	}
 
-	# requestPost
+	/**
+	 * listen
+	 */
+	public function listen($apiName){
 
-	public function requestPost($authName,$url,$postData=[],$getData=[],$headerData=[]){
-
-		$option=[
-			"method"=>"post",
-			"post"=>$postData,
-			"get"=>$getData,
-			"header"=>$headerData,
-		];
-		return $this->request($authName,$url,$option);
-
-	}
-
-	# listen
-
-	public function listen($name){
-
-		$config=$this->{$name};
-
-		if(empty($config["token"]["limit"])){
-			$config["token"]["limit"]=20;
-		}
-		if(empty($config["token"]["algo"])){
-			$config["token"]["algo"]="sha256";
-		}
-
-		$juge=false;
+		$getConf=$this->{$apiName};
 
 		$getHeader=getallheaders();
-
-		if(!empty($getHeader["token"])){
-			$token=$getHeader["token"];
-
-			for($u1=0;$u1<$config["token"]["limit"];$u1++){
-				$tims=set_strtotime()-$u1;
-
-				$target=hash($config["token"]["algo"],@$config["token"]["key"]."||".$tims);
-
-				if($target==$token){
-					$juge=true;
-					if(!empty($config["header"])){
-
-						foreach($config["header"] as $key=>$ch_){
-							if(@$getHeader[$key]!=$ch_){
-								$juge=false;
-								break;
-							}
-						}
-					}
-					break;
-				}
-			}
-		}
-
-		if($this->originAllow){
-			header("Access-Control-Allow-Origin: *");
-		}
-
-		if($juge){
-			if($this->ipAllow){
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-		else
-		{
+		
+		if(empty($getHeader["token"])){
 			return false;
 		}
+
+		if(!empty($getConf["header"])){
+			$jugement=true;
+			foreach($getConf["header"] as $key=>$h_){
+				if(!empty($getHeader[$key])){
+					if($getHeader[$key]!=$h_){
+						$jugement=false;
+						break;
+					}
+				}
+				else
+				{
+					$jugement=false;
+				break;
+				}
+			}
+
+			if(!$jugement){
+				return false;
+			}
+
+		}
+
+		if(!$this->checkListenPrivateToken($getHeader["token"],$getConf)){
+			return false;
+		}
+
+		return true;
+
 	}
 
-	# getApiToken
-	public function getApiToken($authname){
+	/**
+	 * (private)getPrivateToken
+	 */
+	private function getPrivateToken($apiName){
 
-		$config=$this->{$authname};
-		return hash($config["token"]["algo"],$config["token"]["key"]."||".set_strtotime());
+		$getConf=$this->{$apiName};
+
+		if(empty($getConf["token"]["algo"])){
+			$getConf["token"]["algo"]="sha256";
+		}
+		if(empty($getConf["token"]["salt"])){
+			$getConf["token"]["salt"]="abcdefg2Go";
+		}
+		if(empty($getConf["token"]["stretch"])){
+			$getConf["token"]["stretch"]=2;
+		}
+
+		$hash=hash($getConf["token"]["algo"],$getConf["token"]["salt"].date_format(date_create("now"),"U"));
+		for($n1=0;$n1<$getConf["token"]["stretch"];$n1++){
+			$hash=hash($getConf["token"]["algo"],$hash);
+		}
+
+		return $hash;
 
 	}
 
-	# addIpFilter
+	/**
+	 * (private)checkListenPrivateToken
+	 */
+	private function checkListenPrivateToken($targetToken,$getConf){
 
-	public function addIpFilter($mode,$ipList){
-
-		$ipAddress=$this->request->params["option"]["remote"];
-
-		if($mode=="allow"){
-			$juge=false;
+		if(empty($getConf["token"]["algo"])){
+			$getConf["token"]["algo"]="sha256";
 		}
-		else if($mode=="ignore"){
-			$juge=true;
+		if(empty($getConf["token"]["salt"])){
+			$getConf["token"]["salt"]="abcdefg2Go";
 		}
-		foreach($ipList as $i_){
-			if($i_==$ipAddress){
-				if($mode=="allow"){
-					$juge=true;
-				}
-				else if($mode=="ignore"){
-					$juge=false;
-				}
+		if(empty($getConf["token"]["stretch"])){
+			$getConf["token"]["stretch"]=2;
+		}
+		if(empty($getConf["token"]["limit"])){
+			$getConf["token"]["limit"]=180;
+		}
+
+		$jugement=false;
+		for($v1=0;$v1<$getConf["token"]["limit"];$v1++){
+
+			$makeToken=hash($getConf["token"]["algo"],$getConf["token"]["salt"].date_format(date_create("-".$v1." second"),"U"));
+			for($n1=0;$n1<$getConf["token"]["stretch"];$n1++){
+				$makeToken=hash($getConf["token"]["algo"],$makeToken);
+			}
+	
+			if($makeToken==$targetToken){
+				$jugement=true;
 				break;
 			}
 		}
 
-		$this->ipAllow=$juge;
-
-		return $this;
-	}
-
-	# addIpAllow
-
-	public function addIpAllow($ipList){
-		return $this->addIpFilter("allow",$ipList);
-	}
-
-	# appIpIgnore
-
-	public function appIpIgnore($ipList){
-		return $this->addIpFilter("ignore",$ipList);
-	}
-
-	# addOriginFilter
-
-	public function addOriginFilter($mode,$originList){
-
-		$headers=getallheaders();
-
-		$origin="";
-		if(!empty($headers["Origin"])){
-			$origin=$headers["Origin"];
-		}
-
-		if($mode=="allow"){
-			$juge=false;
-		}
-		else if($mode=="ignore"){
-			$juge=true;
-		}
-
-		foreach($originList as $o_){
-			$patternA="http://".$o_;
-			$patternB="https://".$o_;
-			if($origin==$patternA || $origin==$patternB){
-				if($mode=="allow"){
-					$juge=true;
-				}
-				else if($mode=="ignore"){
-					$juge=false;
-				}
-				break;
-			}
-		}
-
-		$this->originAllow=$juge;
-
-		return $this;
-	}
-
-	# addOriginAllow
-
-	public function addOriginAllow($ipList){
-		return $this->addOriginFilter("allow",$ipList);
-	}
-
-	# appOriginIgnore
-
-	public function appOriginIgnore($ipList){
-		return $this->addOriginFilter("ignore",$ipList);
+		return $jugement;
 	}
 
 }
