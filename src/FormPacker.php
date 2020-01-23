@@ -64,6 +64,9 @@ class FormPacker extends Packer{
 			$referer=$ref["Referer"];
 		}
 
+		$referer=str_replace("http://","",$referer);
+		$referer=str_replace("https://","",$referer);
+
 		if(empty($referer)){
 			return false;
 		}
@@ -397,12 +400,7 @@ class FormPackerUI extends FormPacker{
 
 		$url=Request::$params["url"];
 		$url=Request::$params["domain"].$url;
-		if(Request::$params["option"]["port"]==443){
-			$url="https://".$url;
-		}
-		else{
-			$url="http://".$url;
-		}
+
 		$token=hash("sha256",self::$tokenSalt.$url);
 		return $token;
 	}
