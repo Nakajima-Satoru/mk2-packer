@@ -139,13 +139,13 @@ class FormPackerUI extends FormPacker{
 		}
 
 		if($option["type"]!="radio" && $option["type"]!="checkbox"){
-			if($this->_requestCheck($name)){
-				if(empty($option["fixedValue"])){
-					$option["value"]=$this->_requestCheck($name);
-				}
-				else{
-					unset($option["fixedValue"]);
-				}
+			$value=$this->_requestCheck($name);
+
+			if(empty($option["fixedValue"])){
+				$option["value"]=$value;
+			}
+			else{
+				unset($option["fixedValue"]);
 			}
 		}
 
@@ -268,7 +268,7 @@ class FormPackerUI extends FormPacker{
 				$opt["id"]="radio".$name.$key;
 
 				if(empty($option["fixedValue"])){
-					if($ans==$key){
+					if((string)$ans===(string)$key){
 						$opt["checked"]=true;				
 					}
 				}
@@ -329,11 +329,17 @@ class FormPackerUI extends FormPacker{
 
 		$str.=">\n";
 
+		if(!empty($option["empty"])){
+			$str.='<option value="">'.$option["empty"].'</option>'."\n";
+			unset($option["empty"]);
+		}
+
 		if(empty($option["fixedValue"])){
+
 			if(is_array($values)){
 				foreach($values as $key=>$textname){
 					$checked="";
-					if($ans==$key){
+					if((string)$ans===(string)$key){
 						$checked="selected";
 					}
 					$str.='<option value="'.$key.'" '.$checked.'>'.$textname.'</option>'."\n";
@@ -373,7 +379,7 @@ class FormPackerUI extends FormPacker{
 				$opt["id"]="checkbox".$name2;
 
 				if(empty($option["fixedValue"])){
-					if($ans==$key){
+					if((string)$ans===(string)$key){
 						$opt["checked"]=true;				
 					}
 				}
@@ -497,48 +503,48 @@ class FormPackerUI extends FormPacker{
 
 		if(count($names)==1){
 			if($dataType=="object"){
-				if(!empty($getData->{$names[0]})){
+				if(isset($getData->{$names[0]})){
 					return $getData->{$names[0]};
-				}	
+				}
 			}
 			else if($dataType=="array"){
-				if(!empty($getData[$names[0]])){
+				if(isset($getData[$names[0]])){
 					return $getData[$names[0]];
 				}	
 			}
 		}
 		else if(count($names)==2){
 			if($dataType=="object"){
-				if(!empty($getData->{$names[0]}->{$names[1]})){
+				if(isset($getData->{$names[0]}->{$names[1]})){
 					return $getData->{$names[0]}->{$names[1]};
 				}
 			}
 			else if($dataType=="array"){
-				if(!empty($getData[$names[0]][$names[1]])){
+				if(isset($getData[$names[0]][$names[1]])){
 					return $getData[$names[0]][$names[1]];
 				}
 			}
 		}
 		else if(count($names)==3){
 			if($dataType=="object"){
-				if(!empty($getData->{$names[0]}->{$names[1]}->{$names[2]})){
+				if(isset($getData->{$names[0]}->{$names[1]}->{$names[2]})){
 					return $getData->{$names[0]}->{$names[1]}->{$names[2]};
 				}
 			}
 			else if($dataType=="array"){
-				if(!empty($getData[$names[0]][$names[1]][$names[2]])){
+				if(isset($getData[$names[0]][$names[1]][$names[2]])){
 					return $getData[$names[0]][$names[1]][$names[2]];
 				}	
 			}
 		}
 		else if(count($names)==4){
 			if($dataType=="object"){
-				if(!empty($getData->{$names[0]}->{$names[1]}->{$names[2]}->{$names[3]})){
+				if(isset($getData->{$names[0]}->{$names[1]}->{$names[2]}->{$names[3]})){
 					return $getData->{$names[0]}->{$names[1]}->{$names[2]}->{$names[3]};
 				}
 			}
 			else if($dataType=="array"){
-				if(!empty($getData[$names[0]][$names[1]][$names[2]][$names[3]])){
+				if(isset($getData[$names[0]][$names[1]][$names[2]][$names[3]])){
 					return $getData[$names[0]][$names[1]][$names[2]][$names[3]];
 				}
 			}
