@@ -452,24 +452,44 @@ class FormPackerUI extends FormPacker{
 
 	public function setError($name,$option=null){
 
-		$str="";
+		$str="<div";
 
 		if($this->cssFramework=="bootstrap"){
-			if(!empty(self::$errorMessage[$name])){
-				$str.='<div class="invalid-feedback" style="display:block">';
+
+			if(empty($option["class"])){
+				$option["class"]="";
 			}
-			else{
-				$str.='<div class="invalid-feedback">';
+			$option["class"].=" invalid-feedback";
+
+			if(!empty(self::$errorMessage[$name])){
+				if(empty($option["style"])){
+					$option["style"]="";
+				}
+				$option["style"].=";display:block;";
 			}
 		}
 		else{
-			if(!empty(self::$errorMessage[$name])){
-				$str.='<div class="error-message" style="display:block;">';
+
+			if(empty($option["class"])){
+				$option["class"]="";
 			}
-			else{
-				$str.='<div class="error-message">';
+
+			$option["class"].=" error-message";
+			if(!empty(self::$errorMessage[$name])){
+				if(empty($option["style"])){
+					$option["style"]="";
+				}
+				$option["style"].=";display:block;";
 			}
 		}
+
+		if(isset($option)){
+			foreach($option as $field=>$value){
+				$str.=" ".$field.'="'.$value.'"';
+			}
+		}
+
+		$str.=">";
 
 		if(!empty(self::$errorMessage[$name])){
 			$str.=self::$errorMessage[$name];
