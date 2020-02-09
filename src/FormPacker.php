@@ -257,7 +257,10 @@ class FormPackerUI extends FormPacker{
 
 		if(is_array($values)){
 
-			$ans=$this->_requestCheck($name);
+			$ans=$option["value"];
+			if($ansa=$this->_requestCheck($name)){
+				$ans=$ansa;
+			}
 
 			foreach($values as $key=>$textname){
 
@@ -276,10 +279,10 @@ class FormPackerUI extends FormPacker{
 					unset($option["fixedValue"]);
 				}
 
-				$str.='<div class="radio">';
+				//$str.='<div class="radio">';
 				$str.=$this->setInput($name,$opt);
 				$str.='<label for="'.$opt["id"].'">'.$textname.'</label>';
-				$str.="</div>";
+				//$str.="</div>";
 
 			}
 
