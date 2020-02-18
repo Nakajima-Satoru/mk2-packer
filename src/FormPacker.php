@@ -139,7 +139,16 @@ class FormPackerUI extends FormPacker{
 		}
 
 		if($option["type"]!="radio" && $option["type"]!="checkbox"){
-			$value=$this->_requestCheck($name);
+
+			$ans=$this->_requestCheck($name);
+
+			$value="";
+			if(!empty($option["value"])){
+				$value=$option["value"];
+			}
+			if($ans){
+				$value=$ans;
+			}
 
 			if(empty($option["fixedValue"])){
 				$option["value"]=$value;
