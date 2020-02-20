@@ -128,7 +128,7 @@ class CachePacker extends Packer{
 			if(empty($buff["refresh"])){
 
 				if(!empty($buff["limit"])){
-					if(date_format(date_create($buff["limit"]),"U")>date_format(date_create("now"),"U")){
+					if(date_format(date_create($buff["limit"]),"YmdHis")>date_format(date_create("now"),"YmdHis")){
 						$refreshed=false;
 					}
 				}
@@ -145,7 +145,7 @@ class CachePacker extends Packer{
 			if($limit){
 				$buff=[
 					"result"=>call_user_func($callbacks),
-					"limit"=>date_format(date_create("+".$limit." seconds"),"Y-m-d H:i:s"),
+					"limit"=>date_format(date_create("+".$limit." seconds"),"YmdHis"),
 					"refresh"=>false,
 				];
 			}

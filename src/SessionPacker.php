@@ -68,8 +68,8 @@ class SessionPacker extends Packer{
 		}
 
 		if(!empty($this->limit)){
-			$nowUnix=date_format(date_create("now"),"U");
-			$source["__limit"]=date_format(date_create("@".intval($nowUnix+$this->limit)),"Y-m-d H:i:s");
+			$nowUnix=date_format(date_create("now"),"YmdHis");
+			$source["__limit"]=date_format(date_create("+".$this->limit." seconds"),"YmdHis");
 		}
 
 		if(!empty($this->encrypt)){
@@ -86,8 +86,8 @@ class SessionPacker extends Packer{
 	private function _write($source){
 
 		if(!empty($this->limit)){
-			$nowUnix=date_format(date_create("now"),"U");
-			$source["__limit"]=date_format(date_create("@".intval($nowUnix+$this->limit)),"Y-m-d H:i:s");
+			$nowUnix=date_format(date_create("now"),"YmdHis");
+			$source["__limit"]=date_format(date_create("+".$this->limit." seconds"),"YmdHis");
 		}
 
 		if(!empty($this->encrypt)){
@@ -117,15 +117,17 @@ class SessionPacker extends Packer{
 		if(!empty($this->limit)){
 
 			$before_time=0;
-			$getUnix=date_format(date_create("now"),"U");
+			$getUnix=date_format(date_create("now"),"YmdHis");
 			if(!empty($source["__limit"])){
-				$before_time=date_format(date_create($source["__limit"]),"U");
+				$before_time=date_format(date_create($source["__limit"]),"YmdHis");
 			}
-			if($getUnix>$before_time){
+
+			if(intval($getUnix)>intval($before_time)){
 				@session_regenerate_id(true);
 				$this->_write($source);
-				$source["__limit"]=date_format(date_create("@".intval($getUnix+$this->limit)),"Y-m-d H:i:s");
+				$source["__limit"]=date_format(date_create("+".$this->limit." seconds"),"YmdHis");
 			}
+
 		}
 
 		if(empty($opt["on_limit"])){
@@ -197,10 +199,10 @@ class SessionPacker extends Packer{
 		$buff=$this->read($name);
 
 		$refreshed=true;
-		$getUnix=date_format(date_create("now"),"U");
+		$getUnix=date_format(date_create("now"),"YmdHis");
 		if($buff){
 
-			if(date_format(date_create($buff["limit"]),"U")>$getUnix){
+			if(date_format(date_create($buff["limit"]),"YmdHis")>$getUnix){
 				$refreshed=false;
 			}
 		}
@@ -208,7 +210,7 @@ class SessionPacker extends Packer{
 		if($refreshed){
 			$buff=[
 				"result"=>call_user_func($callback),
-				"limit"=>date_format(date_create("@".intval($getUnix+$refreshLimit)),"Y-m-d H:i:s"),
+				"limit"=>date_format(date_create("+".$refreshLimit." seconds"),"YmdHis"),
 			];
 
 			$this->write($name,$buff);

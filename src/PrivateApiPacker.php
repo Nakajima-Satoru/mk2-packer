@@ -137,7 +137,7 @@ class PrivateApiPacker extends Packer{
 			$getConf["token"]["stretch"]=2;
 		}
 
-		$hash=hash($getConf["token"]["algo"],$getConf["token"]["salt"].date_format(date_create("now"),"U"));
+		$hash=hash($getConf["token"]["algo"],$getConf["token"]["salt"].date_format(date_create("now"),"YmdHis"));
 		for($n1=0;$n1<$getConf["token"]["stretch"];$n1++){
 			$hash=hash($getConf["token"]["algo"],$hash);
 		}
@@ -167,7 +167,7 @@ class PrivateApiPacker extends Packer{
 		$jugement=false;
 		for($v1=0;$v1<$getConf["token"]["limit"];$v1++){
 
-			$makeToken=hash($getConf["token"]["algo"],$getConf["token"]["salt"].date_format(date_create("-".$v1." second"),"U"));
+			$makeToken=hash($getConf["token"]["algo"],$getConf["token"]["salt"].date_format(date_create("-".$v1." second"),"YmdHis"));
 			for($n1=0;$n1<$getConf["token"]["stretch"];$n1++){
 				$makeToken=hash($getConf["token"]["algo"],$makeToken);
 			}
