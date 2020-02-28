@@ -78,6 +78,8 @@ class FormPacker extends Packer{
 			return false;
 		}
 
+		unset(Request::$post["__token"]);
+		
 		return true;
 	}
 }
