@@ -23,13 +23,13 @@ class FormPacker extends Packer{
 	# __construct
 
 	public function __construct($option){
+		parent::__construct($option);
 
 		if(!empty($option["cssFramework"])){
 			self::$_cssFramework=$option["cssFramework"];
 			unset($option["cssFramework"]);
 		}
 
-		parent::__construct($option);
 	}
 
 	# setErrors
