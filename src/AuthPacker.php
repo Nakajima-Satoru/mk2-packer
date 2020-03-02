@@ -39,14 +39,27 @@ class AuthPacker extends AuthBasePacker{
 			return false;
 		}
 		if(empty($this->dbTable["username"])){
-			$this->dbTable["username"]="username";
+			$this->dbTable["username"]=["username"];
+		}
+		if(!is_array($this->dbTable["username"])){
+			$this->dbTable["username"]=[$this->dbTable["username"]];
 		}
 		if(empty($this->dbTable["password"])){
 			$this->dbTable["password"]="password";
 		}
-		if(empty($post[$this->dbTable["username"]])){
+
+		$juge1=false;
+		foreach($this->dbTable["username"] as $u_){
+			if(!empty($post[$u_])){
+				$juge1=true;
+				break;
+			}
+		}
+
+		if(!$juge1){
 			return false;
 		}
+
 		if(empty($post[$this->dbTable["password"]])){
 			return false;
 		}
@@ -59,9 +72,12 @@ class AuthPacker extends AuthBasePacker{
 			"type"=>"first",
 		];
 
-		$params["where"]=[
-			[$this->dbTable["username"],$post[$this->dbTable["username"]]],
-		];
+		$params["where"]=[];
+		foreach($this->dbTable["username"] as $ind=>$u_){
+			if(!empty($post[$u_])){
+				$params["where"][]=[$u_,$post[$u_]];
+			}
+		}
 
 		// if force Login limitter is "false"...
 		if(empty($forceLoginLimitter)){
