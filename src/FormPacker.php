@@ -356,7 +356,20 @@ class FormPackerUI extends FormPacker{
 					if((string)$ans===(string)$key){
 						$checked="selected";
 					}
-					$str.='<option value="'.$key.'" '.$checked.'>'.$textname.'</option>'."\n";
+					if(is_array($textname)){
+
+						$str.='<optgroup label="'.$key.'">';
+
+						foreach($textname as $key2=>$textname2){
+							$str.='<option value="'.$key2.'">'.$textname2.'</option>';
+						}
+
+						$str.='</optgroup>';
+					}
+					else
+					{
+						$str.='<option value="'.$key.'" '.$checked.'>'.$textname.'</option>'."\n";
+					}
 				}
 
 			}
