@@ -73,10 +73,15 @@ class AuthPacker extends AuthBasePacker{
 		];
 
 		$params["where"]=[];
+		$userValue="";
 		foreach($this->dbTable["username"] as $ind=>$u_){
 			if(!empty($post[$u_])){
-				$params["where"][]=[$u_,$post[$u_]];
+				$userValue=$post[$u_];
 			}
+		}
+
+		foreach($this->dbTable["username"] as $ind=>$u_){
+			$params["where"][]=[$u_,$userValue,"OR",2];
 		}
 
 		// if force Login limitter is "false"...
@@ -96,7 +101,7 @@ class AuthPacker extends AuthBasePacker{
 		if(!empty($this->dbTable["fields"])){
 			$params["fields"]=$this->dbTable["fields"];
 		}
-		
+
 		$check=$obj->select($params);
 
 		unset($check->password);
