@@ -414,6 +414,13 @@ class FormPackerUI extends FormPacker{
 					unset($option["fixedValue"]);
 				}
 
+				unset($opt["checked"]);
+				if(!empty($option["checked"])){
+					if(in_array($key,$option["checked"])){
+						$opt["checked"]=true;
+					}	
+				}
+
 				$str.='<div class="checkbox">';
 				$str.=$this->setInput($name1,$opt);
 				$str.='<label for="'.$opt["id"].'">'.$textname.'</label>';
