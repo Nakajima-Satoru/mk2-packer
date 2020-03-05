@@ -488,6 +488,12 @@ class FormPackerUI extends FormPacker{
 
 		$str="<div";
 
+		if(empty($option)){
+			$option=[];
+		}
+		
+		$option["data-name"]=$name;
+
 		if($this->cssFramework=="bootstrap"){
 
 			if(empty($option["class"])){
