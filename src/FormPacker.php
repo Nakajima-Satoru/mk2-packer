@@ -142,12 +142,13 @@ class FormPackerUI extends FormPacker{
 
 		if($option["type"]!="radio" && $option["type"]!="checkbox"){
 
-			$ans=$this->_requestCheck($name);
+			$defValue="";
+			if(!empty($option["value"])){
+				$defValue=$option["value"];
+			}
+			$ans=$this->_requestCheck($name,$defValue);
 
 			$value="";
-			if(!empty($option["value"])){
-				$value=$option["value"];
-			}
 			if($ans){
 				$value=$ans;
 			}
@@ -209,17 +210,26 @@ class FormPackerUI extends FormPacker{
 	public function setTextarea($name,$option=null){
 		$str='<textarea';
 
-		$option["value"]=$this->_requestCheck($name);
+		if(!empty($option["value"])){
+			$defValue=$option["value"];
+		}
+
+		$defValue="";
+		if(!empty($option["value"])){
+			$defValue=$option["value"];
+		}
+		$ans=$this->_requestCheck($name,$defValue);
 
 		$value="";
-		if(!empty($option["value"])){
-			if(empty($option["fixedValue"])){
-				$value=$option["value"];
-				unset($option["value"]);
-			}
-			else{
-				unset($option["fixedValue"]);
-			}
+		if($ans){
+			$value=$ans;
+		}
+
+		if(empty($option["fixedValue"])){
+			$option["value"]=$value;
+		}
+		else{
+			unset($option["fixedValue"]);
 		}
 
 		$option["name"]=$name;
@@ -398,27 +408,32 @@ class FormPackerUI extends FormPacker{
 				$name1=$name0."[".$ind."]";
 				$name2=$name0.".".$ind;
 
-				$ans=$this->_requestCheck($name2);
+				$chkjuge=false;
+				if(!empty($option["checked"])){
+					foreach($option["checked"] as $chk_){
+						if($key==$chk_){
+							$chkjuge=true;
+							break;
+						}
+					}
+				}
+
+				$ans=$this->_requestCheck($name2,$chkjuge);
 
 				$opt=$option;
+				unset($opt["checked"]);
+
 				$opt["value"]=$key;
 				$opt["type"]="checkbox";
 				$opt["id"]="checkbox".$name2;
 
 				if(empty($option["fixedValue"])){
-					if((string)$ans===(string)$key){
+					if($ans){
 						$opt["checked"]=true;				
 					}
 				}
 				else{
 					unset($option["fixedValue"]);
-				}
-
-				unset($opt["checked"]);
-				if(!empty($option["checked"])){
-					if(in_array($key,$option["checked"])){
-						$opt["checked"]=true;
-					}	
 				}
 
 				$str.='<div class="checkbox">';
@@ -539,17 +554,23 @@ class FormPackerUI extends FormPacker{
 		return $str;
 	}
 
-	private function _requestCheck($name){
+	private function _requestCheck($name,$defValue=null){
 
 		$getData=null;
 		if($this->method=="post"){
 			if(!empty(Request::$post)){
 				$getData=Request::$post;
-			}		
+			}
+			else{
+				return $defValue;
+			}
 		}
 		else if($this->method=="get"){
 			if(!empty(Request::$get)){
 				$getData=Request::$get;
+			}
+			else{
+				return $defValue;
 			}
 		}
 
