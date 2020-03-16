@@ -135,7 +135,7 @@ class FormPackerUI extends FormPacker{
 	public function setInput($name,$option=null){
 		$str='<input';
 
-		$option["name"]=$name;
+		$option["name"]=$this->_setName($name);
 		if(empty($option["type"])){
 			$option["type"]="text";
 		}
@@ -172,8 +172,10 @@ class FormPackerUI extends FormPacker{
 					$option["class"]="";
 				}
 				$option["class"].=" form-control";
+			
+				$res=$this->_getErrorMessage($name);
 
-				if(!empty(self::$errorMessage[$name])){
+				if(!empty($res)){
 					$option["class"].=" is-invalid";
 				}
 
@@ -184,7 +186,9 @@ class FormPackerUI extends FormPacker{
 
 			# is other...
 
-			if(!empty(self::$errorMessage[$name])){
+			$res=$this->_getErrorMessage($name);
+
+			if(!empty($res)){
 				if(empty($option["class"])){
 					$option["class"]="";
 				}
@@ -232,7 +236,7 @@ class FormPackerUI extends FormPacker{
 			unset($option["fixedValue"]);
 		}
 
-		$option["name"]=$name;
+		$option["name"]=$this->_setName($name);
 
 		# css Framework case...
 		if($this->cssFramework=="bootstrap"){
@@ -244,7 +248,9 @@ class FormPackerUI extends FormPacker{
 
 			$option["class"].=" form-control";
 
-			if(!empty(self::$errorMessage[$name])){
+			$res=$this->_getErrorMessage($name);
+
+			if(!empty($res)){
 				$option["class"].=" is-invalid";
 			}
 			
@@ -253,7 +259,9 @@ class FormPackerUI extends FormPacker{
 
 			# is other...
 
-			if(!empty(self::$errorMessage[$name])){
+			$res=$this->_getErrorMessage($name);
+
+			if(!empty($res)){
 				if(empty($option["class"])){
 					$option["class"]="";
 				}
@@ -318,7 +326,7 @@ class FormPackerUI extends FormPacker{
 
 		$str="<select";
 
-		$option["name"]=$name;
+		$option["name"]=$this->_setName($name);
 		$ans=$this->_requestCheck($name);
 
 		# css Framework case...
@@ -331,7 +339,9 @@ class FormPackerUI extends FormPacker{
 			}
 			$option["class"].=" form-control";
 
-			if(!empty(self::$errorMessage[$name])){
+			$res=$this->_getErrorMessage($name);
+
+			if(!empty($res)){
 				$option["class"].=" is-invalid";
 			}
 
@@ -340,7 +350,9 @@ class FormPackerUI extends FormPacker{
 
 			# is other...
 
-			if(!empty(self::$errorMessage[$name])){
+			$res=$this->_getErrorMessage($name);
+
+			if(!empty($res)){
 				if(empty($option["class"])){
 					$option["class"]="";
 				}
@@ -405,7 +417,6 @@ class FormPackerUI extends FormPacker{
 			$ind=0;
 			foreach($values as $key=>$textname){
 
-				$name1=$name0."[".$ind."]";
 				$name2=$name0.".".$ind;
 
 				$chkjuge=false;
@@ -429,7 +440,7 @@ class FormPackerUI extends FormPacker{
 
 				if(empty($option["fixedValue"])){
 					if($ans){
-						$opt["checked"]=true;				
+						$opt["checked"]=true;
 					}
 				}
 				else{
@@ -437,7 +448,7 @@ class FormPackerUI extends FormPacker{
 				}
 
 				$str.='<div class="checkbox">';
-				$str.=$this->setInput($name1,$opt);
+				$str.=$this->setInput($name2,$opt);
 				$str.='<label for="'.$opt["id"].'">'.$textname.'</label>';
 				$str.='</div>';
 				$ind++;
@@ -516,7 +527,9 @@ class FormPackerUI extends FormPacker{
 			}
 			$option["class"].=" invalid-feedback";
 
-			if(!empty(self::$errorMessage[$name])){
+			$res=$this->_getErrorMessage($name);
+
+			if(!empty($res)){
 				if(empty($option["style"])){
 					$option["style"]="";
 				}
@@ -530,7 +543,10 @@ class FormPackerUI extends FormPacker{
 			}
 
 			$option["class"].=" error-message";
-			if(!empty(self::$errorMessage[$name])){
+
+			$res=$this->_getErrorMessage($name);
+
+			if(!empty($res)){
 				if(empty($option["style"])){
 					$option["style"]="";
 				}
@@ -546,12 +562,23 @@ class FormPackerUI extends FormPacker{
 
 		$str.=">";
 
-		if(!empty(self::$errorMessage[$name])){
-			$str.=self::$errorMessage[$name];
+		if(!empty($res)){
+			$str.=$res;
 		}
 
 		$str.="</div>";		
 		return $str;
+	}
+
+	# getErrorMessage
+	public function getErrorMessage($name=null){
+		if($name){
+			return $this->_getErrorMessage($name);
+		}
+		else
+		{
+			return self::$errorMessage;
+		}
 	}
 
 	private function _requestCheck($name,$defValue=null){
@@ -644,4 +671,44 @@ class FormPackerUI extends FormPacker{
 		return $str;
 
 	}
+
+	private function _setName($name){
+		$names=explode(".",$name);
+
+		$str="";
+		foreach($names as $ind=>$n_){
+			if($ind){
+				$str.="[".$n_."]";
+			}
+			else{
+				$str.=$n_;
+			}
+		}
+
+		return $str;
+
+	}
+
+	private function _getErrorMessage($name){
+
+		$buff=self::$errorMessage;
+		$res=null;
+
+		$names=explode(".",$name);
+
+		foreach($names as $n_){
+			if(!empty($buff[$n_])){
+				$buff=$buff[$n_];
+				$res=$buff;
+			}
+			else
+			{
+				$res=null;
+				break;
+			}
+		}
+
+		return $res;
+	}
+
 }
