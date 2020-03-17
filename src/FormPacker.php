@@ -214,14 +214,11 @@ class FormPackerUI extends FormPacker{
 	public function setTextarea($name,$option=null){
 		$str='<textarea';
 
-		if(!empty($option["value"])){
-			$defValue=$option["value"];
-		}
-
 		$defValue="";
 		if(!empty($option["value"])){
 			$defValue=$option["value"];
 		}
+
 		$ans=$this->_requestCheck($name,$defValue);
 
 		$value="";
@@ -270,6 +267,7 @@ class FormPackerUI extends FormPacker{
 
 		}
 		
+		unset($option["value"]);
 
 		$str=$this->_setTagAttribute($str,$option);
 
