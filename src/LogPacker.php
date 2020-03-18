@@ -16,7 +16,7 @@ namespace mk2\core;
 
 class LogPacker extends Packer{
 
-	public $tmpDir="../tmp/Log";
+	public $tmpDir=MK2_PATH_APP_TEMPORARY."log";
 
 	public $writeError=[
 		"simple"=>false,

@@ -16,7 +16,7 @@ namespace mk2\core;
 
 class SessionPacker extends Packer{
 
-	public $tmpPath="session";
+	public $tmpPath=MK2_PATH_APP_TEMPORARY."session";
 	public $name="mk2sess";
 	public $limit=10800;
 	public $encrypt=[
@@ -25,23 +25,22 @@ class SessionPacker extends Packer{
 		"password"=>"msorig0ra90gfa47f80A3er6a485j10ivjorjfaUe2Fr9f0a8f9agafadfa1ga54r5e6a1",
 	];
 
+	public $usePackerClass=[
+		"Encrypt"=>"Encrypt",
+	];
+
 	# __construct
 
 	public function __construct($option){
 		parent::__construct($option);
 
 		$this->setPacker([
-			"Encrypt",
+			$this->usePackerClass["Encrypt"],
 		]);
 
-		$tmp="../tmp/";
-		if(defined('MK2_PATH_TMP')){
-			$tmp=MK2_PATH_TMP;
-		}
-
 		if(!empty($this->tmpPath)){
-			@mkdir($tmp.$this->tmpPath,0775,true);
-			@session_save_path($tmp.$this->tmpPath);
+			@mkdir($this->tmpPath,0775,true);
+			@session_save_path($this->tmpPath);
 		}
 		@session_start();
 	}

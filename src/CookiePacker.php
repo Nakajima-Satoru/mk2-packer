@@ -27,13 +27,17 @@ class CookiePacker extends Packer{
 	public $domain="";
 	public $secure="";
 
+	public $usePackerClass=[
+		"Encrypt"=>"Encrypt",
+	];
+
 	# __construct
 
 	public function __construct($option){
 		parent::__construct($option);
 
 		$this->setPacker([
-			"Encrypt",
+			$this->usePackerClass["Encrypt"],
 		]);
 
 	}

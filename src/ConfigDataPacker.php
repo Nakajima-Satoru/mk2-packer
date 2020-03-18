@@ -26,12 +26,8 @@ class ConfigDataPacker extends Packer{
 		"value"=>"value",
 	];
 
-	# __construct
-
-	public function __construct(){
-		parent::__construct();
-
-		$this->setPacker([
+	public $usePackerClass=[
+		"Cache"=>[
 			"Cache"=>[
 				"mode"=>"file",
 				"name"=>"RCACHECONFIG",
@@ -41,6 +37,27 @@ class ConfigDataPacker extends Packer{
 					"password"=>"SieroiDIorjepga098423jGaEi098fa6f51ji2904jfapreaijg9044j5io598f0a7099gj",
 				],
 			],
+		],
+	];
+
+	# __construct
+
+	public function __construct(){
+		parent::__construct();
+
+		$this->setPacker([
+			$this->usePackerClass["Cache"],
+/*
+			"Cache"=>[
+				"mode"=>"file",
+				"name"=>"RCACHECONFIG",
+				"encrypt"=>[
+					"encType"=>"aes-256-cbc",
+					"hashNumber"=>"Euf9ar0e98ga9ae9aifaah;o43ijIPFIE9g8a-0erajEPOEIRga8970434j;loDIRoeigGGE",
+					"password"=>"SieroiDIorjepga098423jGaEi098fa6f51ji2904jfapreaijg9044j5io598f0a7099gj",
+				],
+			],
+*/
 		]);
 
 	}

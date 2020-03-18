@@ -40,11 +40,15 @@ class PrivateApiPacker extends Packer{
 	 * ],
 	 */
 
+	public $usePackerClass=[
+		"Curl"=>"Curl",
+	];
+
 	public function __construct($option){
 		parent::__construct($option);
 
 		$this->setPacker([
-			"Curl",
+			$this->usePackerClass["Curl"],
 		]);
 
 	}

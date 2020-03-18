@@ -29,11 +29,15 @@ class AuthBasePacker extends Packer{
 	];
 	public $allowList=[];
 
+	public $usePackerClass=[
+		"Session"=>"Session",
+	];
+
 	public function __construct($option){
 		parent::__construct($option);
 
 		$this->setPacker([
-			"Session",
+			$this->usePackerClass["Session"],
 		]);
 
 	}

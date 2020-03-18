@@ -28,6 +28,10 @@ class LanguagePacker extends Packer{
 
 	public $defaultLanguage="en";
 
+	public $usePackerClass=[
+		"Session"=>"Session",
+	];
+
 	/**
 	 * __construct
 	 */
@@ -35,7 +39,7 @@ class LanguagePacker extends Packer{
 		parent::__construct($option);
 
 		$this->setPacker([
-			"Session",
+			$this->usePackerClass["Session"],
 		]);
 
 		self::$_languageList=$this->languageList;

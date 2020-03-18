@@ -35,7 +35,11 @@ class CachePacker extends Packer{
 		"hashNumber"=>"FIEROGF9230945FJIERG7f99fa0e9r8GIORg",
 		"password"=>"Ysfr9a08regpoiD980raejAIDorie0-9g8a",
 	];
-	public $fileTmp="../tmp/";
+	public $fileTmp=MK2_PATH_APP_TEMPORARY;
+
+	public $usePackerClass=[
+		"Encrypt"=>"Encrypt",
+	];
 
 	# __construct
 
@@ -43,12 +47,8 @@ class CachePacker extends Packer{
 		parent::__construct($option);
 
 		$this->setPacker([
-			"Encrypt",
+			$this->usePackerClass["Encrypt"],
 		]);
-
-		if(defined('MK2_PATH_TMP')){
-			$this->fileTmp=MK2_PATH_TMP;
-		}
 
 	}
 
