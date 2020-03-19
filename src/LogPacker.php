@@ -50,17 +50,19 @@ class LogPacker extends Packer{
 		}
 
 		# error log write
-		error_log($strings,3,$this->tmpDir."/".$fileName);
+		if(!empty($this->tmpDir)){
+			error_log($strings,3,$this->tmpDir."/".$fileName);
+		}
+		else
+		{
+			error_log($strings);
+		}
 
 	}
 
 	# (privte) _writeDefault
 
 	private function _writeDefault($mode="error"){
-
-		if(defined('MK2_PATH_TMP')){
-			$this->tmpDir=MK2_PATH_TMP;
-		}
 		
 		if(!is_dir($this->tmpDir)){
 			@mkdir($this->tmpDir,0777,true);
@@ -123,7 +125,13 @@ class LogPacker extends Packer{
 		}
 
 		# access log write
-		error_log($strings,3,$this->tmpDir."/".$fileName);
+		if(!empty($this->tmpDir)){
+			error_log($strings,3,$this->tmpDir."/".$fileName);
+		}
+		else
+		{
+			error_log($strings);
+		}
 
 	}
 
@@ -162,7 +170,13 @@ class LogPacker extends Packer{
 		$strings=$this->_writeStr($message,$lof);
 
 		 # log write
-		error_log($strings,3,$this->tmpDir."/".$fileName);
+		if(!empty($this->tmpDir)){
+			error_log($strings,3,$this->tmpDir."/".$fileName);
+		}
+		else
+		{
+			error_log($strings);
+		}
 
 	}
 
