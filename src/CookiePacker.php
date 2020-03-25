@@ -1,18 +1,19 @@
 <?php
 
-/*
+/**
+ * 
+ * [mk2 standard packer]
+ * CookiePacker
+ * 
+ * For cookie data management.
+ * Copylight (C) Nakajima Satoru 2020.
+ * URL:https://www.mk2-php.com/
+ *
+ */
 
-- mk2 standard packer -
+namespace mk2\packer;
 
-CookiePacker
-
-For cookie data management.
-
-Copylight (C) Nakajima Satoru 2020.
-
-*/
-
-namespace mk2\core;
+use mk2\core\Packer;
 
 class CookiePacker extends Packer{
 
@@ -31,8 +32,9 @@ class CookiePacker extends Packer{
 		"Encrypt"=>"Encrypt",
 	];
 
-	# __construct
-
+	/**
+	 * __construct
+	 */
 	public function __construct($option){
 		parent::__construct($option);
 
@@ -42,8 +44,9 @@ class CookiePacker extends Packer{
 
 	}
 
-	# write
-
+	/**
+	 * write
+	 */
 	public function write($name,$value,$option=array()){
 
 		if(!empty($this->name)){
@@ -117,8 +120,9 @@ class CookiePacker extends Packer{
 		
 	}
 
-	# read
-
+	/**
+	 * read
+	 */
 	public function read($name){
 
 		if(!empty($this->name)){
@@ -142,8 +146,9 @@ class CookiePacker extends Packer{
 		return $source;
 	}
 
-	# delete
-
+	/**
+	 * delete
+	 */
 	public function delete($name,$option=array()){
 
 
@@ -193,4 +198,5 @@ class CookiePacker extends Packer{
 
 		return;
 	}
+
 }

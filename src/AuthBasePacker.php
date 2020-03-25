@@ -1,18 +1,20 @@
 <?php
 
-/*
+/**
+ * 
+ * [mk2 standard packer]
+ * AuthBasePacker
+ * 
+ * A simple authentication component.
+ * Copylight (C) Nakajima Satoru 2020.
+ * URL:https://www.mk2-php.com/
+ *
+ */
 
-- mk2 standard packer -
+namespace mk2\packer;
 
-AuthBasePacker
-
-A simple authentication component.
-
-Copylight (C) Nakajima Satoru 2020.
-
-*/
-
-namespace mk2\core;
+use mk2\core\Packer;
+use mk2\core\Request;
 
 class AuthBasePacker extends Packer{
 
@@ -42,8 +44,9 @@ class AuthBasePacker extends Packer{
 
 	}
 
-	# convertAuthData
-
+	/**
+	 * convertAuthData
+	 */
 	public function convertAuthData($data){
 
 		$loginDate=date_format(date_create("now"),"Y-m-d H:i:s");
@@ -57,8 +60,9 @@ class AuthBasePacker extends Packer{
 
 	}
 
-	# getAuthData
-
+	/**
+	 * getAuthData
+	 */
 	public function getAuthData(){
 		
 		$getData=$this->Packer->Session->read($this->authName);
@@ -67,16 +71,18 @@ class AuthBasePacker extends Packer{
 		}
 	}
 
-	# refresh
-
+	/**
+	 * refresh
+	 */
 	public function refresh($data){
 		$data=$this->convertAuthData($data);
 		$this->Packer->Session->change_ssid();
 		$this->Packer->Session->write($this->authName,$data);
 	}
 
-	# loginCheck
-
+	/**
+	 * loginCheck
+	 */
 	public function loginCheck(){
 
 		if(!empty($this->Packer->Session->read($this->authName))){
@@ -126,15 +132,17 @@ class AuthBasePacker extends Packer{
 		}
 	}
 
-	# logout
-
+	/**
+	 * logout
+	 */
 	public function logout(){
 		$this->Packer->Session->delete($this->authName);
 		$this->Packer->Session->change_ssid();		
 	}
 
-	# (private) _convertUrl
-
+	/**
+	 * (private) _convertUrl
+	 */
 	private function _convertUrl($params){
 
 		$url=$this->getUrl($params);
@@ -149,8 +157,9 @@ class AuthBasePacker extends Packer{
 
 	}
 
-	# (private) _makeParityCode
-
+	/**
+	 * (private) _makeParityCode
+	 */
 	private function _makeParityCode($data,$loginDate){
 
 		if(empty($this->parityCode["algo"])){

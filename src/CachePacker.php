@@ -1,24 +1,27 @@
 <?php
 
-/*
+/**
+ * 
+ * [mk2 standard packer]
+ * CachePacker
+ * 
+ * Data cache management component.
+ * Copylight (C) Nakajima Satoru 2020.
+ * URL:https://www.mk2-php.com/
+ *
+ */
 
-- mk2 standard packer -
+namespace mk2\packer;
 
-CachePacker
-
-Data cache management component.
-
-Copylight (C) Nakajima Satoru 2020.
-
-*/
-
-namespace mk2\core;
+use mk2\core\Packer;
 
 class CachePacker extends Packer{
 
-	# mode : Cache method.
-	# file		= file cache(Automatically generated in the temporary directory)
-	# memory	= Cache in shared memory (requires APCu module)
+	/**
+	 * mode 	: Cache method.
+	 * file		= file cache(Automatically generated in the temporary directory)
+	 * memory	= Cache in shared memory (requires APCu module)
+	 */
 
 	public $mode="file"; 
 	public $publics=true;
@@ -41,8 +44,9 @@ class CachePacker extends Packer{
 		"Encrypt"=>"Encrypt",
 	];
 
-	# __construct
-
+	/**
+	 * __construct
+	 */
 	public function __construct($option=null){
 		parent::__construct($option);
 
@@ -52,8 +56,9 @@ class CachePacker extends Packer{
 
 	}
 
-	# public
-
+	/**
+	 * public
+	 */
 	public function public(){
 
 		$this->publics=true;
@@ -61,8 +66,9 @@ class CachePacker extends Packer{
 
 	}
 
-	# private
-
+	/**
+	 * private
+	 */
 	public function private(){
 
 		$this->publics=false;
@@ -70,8 +76,9 @@ class CachePacker extends Packer{
 
 	}
 
-	# read
-
+	/**
+	 * read
+	 */
 	public function read($name=null,$secondPw=null){
 
 		$get=$this->_read($name);
@@ -104,8 +111,9 @@ class CachePacker extends Packer{
 
 	}
 
-	# flash
-
+	/**
+	 * flash
+	 */
 	public function flash($name){
 
 		$out=$this->read($name);
@@ -115,8 +123,9 @@ class CachePacker extends Packer{
 
 	}
 
-	# buffering 
-
+	/**
+	 * buffering
+	 */
 	public function buffering($name,$limit=0,$callbacks){
 
 		$buff=$this->read($name);
@@ -164,8 +173,9 @@ class CachePacker extends Packer{
 
 	}
 
-	# bufferingAllow
-
+	/**
+	 * bufferingAllow
+	 */
 	public function bufferingAllow($name){
 
 		$buff=$this->read($name);
@@ -178,8 +188,9 @@ class CachePacker extends Packer{
 
 	}
 
-	# write
-
+	/**
+	 * write
+	 */
 	public function write($name,$value,$secondPw=null){
 
 		if($secondPw){
@@ -199,8 +210,9 @@ class CachePacker extends Packer{
 
 	}
 
-	# delete
-
+	/**
+	 * delete
+	 */
 	public function delete($name=null){
 
 		if($name){
@@ -213,24 +225,27 @@ class CachePacker extends Packer{
 
 	}
 
-	# clear
-
+	/**
+	 * clear
+	 */
 	public function clear(){
 
 		$this->_delete();
 
 	}
 
-	# getMemoryInfo
-
+	/**
+	 * getMemoryInfo
+	 */
 	public function getMemoryInfo(){
 
 		return apcu_cache_info();
 
 	}
 
-	# getMemoryUsed
-
+	/**
+	 * getMemoryUsed
+	 */
 	public function getMemoryUsed($errMsged=false){
 
 		if($this->mode=="memory"){
@@ -249,11 +264,11 @@ class CachePacker extends Packer{
 				}
 			}
 		}
-
 	}
 
-	# setMemoryClear
-
+	/**
+	 * setMemoryClear
+	 */
 	public function setMemoryClear($full=false){
 
 		if($this->publics){
@@ -270,8 +285,9 @@ class CachePacker extends Packer{
 
 	}
 
-	# (private) _write
-
+	/**
+	 * (private) _write
+	 */
 	private function _write($name,$value){
 
 		if($this->mode=="file"){
@@ -283,8 +299,9 @@ class CachePacker extends Packer{
 
 	}
 
-	# (private) _writeFile
-
+	/**
+	 * (private) _writeFile
+	 */
 	private function _writeFile($name,$value){
 
 		if(!empty($this->encrypt)){
@@ -317,8 +334,9 @@ class CachePacker extends Packer{
 
 	}
 
-	# (private) _writeMemory
-
+	/**
+	 * (private) _writeMemory
+	 */
 	private function _writeMemory($name,$value){
 
 		if($this->publics){
@@ -341,8 +359,9 @@ class CachePacker extends Packer{
 
 	}
 
-	# (private) _read
-
+	/**
+	 * (private) _read
+	 */
 	private function _read($name=null){
 
 		if($this->mode=="file"){
@@ -354,8 +373,9 @@ class CachePacker extends Packer{
 
 	}
 
-	# (private) _readFile
-
+	/**
+	 * (private) _readFile
+	 */
 	private function _readFile($name=null){
 
 
@@ -452,8 +472,9 @@ class CachePacker extends Packer{
 
 	}
 
-	# (private) _readMemory
-
+	/**
+	 * (private) _readMemory
+	 */
 	private function _readMemory($name=null){
 
 		if($this->publics){
@@ -484,8 +505,9 @@ class CachePacker extends Packer{
 
 	}
 
-	# (private) _delete
-
+	/**
+	 * (private) _delete
+	 */
 	private function _delete($name=null){
 
 		if($this->mode=="file"){
@@ -497,8 +519,9 @@ class CachePacker extends Packer{
 
 	}
 
-	# (private) _deleteFile
-
+	/**
+	 * (private) _deleteFile
+	 */
 	private function _deleteFile($name=null){
 
 		if($name){
@@ -531,8 +554,9 @@ class CachePacker extends Packer{
 		}
 	}
 
-	# (private) _deleteMemory
-
+	/**
+	 * (private) _deleteMemory
+	 */
 	private function _deleteMemory($name=null){
 
 		$get=$this->read();
@@ -563,8 +587,9 @@ class CachePacker extends Packer{
 
 	}
 
-	# (private) _getPrivateCacheId
-
+	/**
+	 * (private) _getPrivateCacheId
+	 */
 	private function _getPrivateCacheId(){
 
 		if($this->publics){
@@ -581,6 +606,5 @@ class CachePacker extends Packer{
 			return $cacheId;
 		}
 	}
-
 
 }

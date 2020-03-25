@@ -1,22 +1,25 @@
 <?php
 
-/*
+/**
+ * 
+ * [mk2 standard packer]
+ * CurlPacker
+ * 
+ * For external requests using the Curl module.
+ * Copylight (C) Nakajima Satoru 2020.
+ * URL:https://www.mk2-php.com/
+ *
+ */
 
-- mk2 standard packer -
+namespace mk2\packer;
 
-CurlPacker
-
-For external requests using the Curl module.
-
-Copylight (C) Nakajima Satoru 2020.
-
-*/
-
-namespace mk2\core;
+use mk2\core\Packer;
 
 class CurlPacker extends Packer{
 
-	// access
+	/**
+	 * access
+	 */
 	public function access($params=array()){
 
 		$this->_output=null;
@@ -77,8 +80,9 @@ class CurlPacker extends Packer{
 		return $output;
 	}
 
-	# access GET
-	
+	/**
+	 * accessGet
+	 */
 	public function accessGet($url,$getData=[],$headerOption=[]){
 
 		$params=[
@@ -92,8 +96,9 @@ class CurlPacker extends Packer{
 		
 	}
 
-	# access POST
-
+	/**
+	 * accessPost
+	 */
 	public function accessPost($url,$postData=[],$getData=[],$headerOption=[]){
 
 		$params=[
@@ -107,8 +112,9 @@ class CurlPacker extends Packer{
 		return $this->access($params);
 	}
 
-	# accessHeaders
-	
+	/**
+	 * accessHeaders
+	 */
 	public function accessHeaders($url,$headerOption=[]){
 
 		$params=[

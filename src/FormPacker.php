@@ -1,18 +1,20 @@
 <?php
 
-/*
+/**
+ * 
+ * [mk2 standard packer]
+ * FormPacker
+ * 
+ * For form tag generation.
+ * Copylight (C) Nakajima Satoru 2020.
+ * URL:https://www.mk2-php.com/
+ *
+ */
 
-- mk2 standard packer -
+namespace mk2\packer;
 
-FormPacker
-
-For form tag generation.
-
-Copylight (C) Nakajima Satoru 2020.
-
-*/
-
-namespace mk2\core;
+use mk2\core\Packer;
+use mk2\core\Request;
 
 class FormPacker extends Packer{
 
@@ -20,8 +22,9 @@ class FormPacker extends Packer{
 	public static $errorMessage=[];
 	public static $_cssFramework=null;
 
-	# __construct
-
+	/**
+	 * __construct
+	 */
 	public function __construct($option){
 		parent::__construct($option);
 
@@ -32,21 +35,24 @@ class FormPacker extends Packer{
 
 	}
 
-	# setErrors
-	
+	/**
+	 * setErrors
+	 */
 	public function setErrors($data){
 		self::$errorMessage=$data;
 	}
 
-	# setToken
-	
+	/**
+	 * setToken
+	 */
 	public function setToken($tokenSalt){
-		self::$tokenSalt=$tokenSalt;				
+		self::$tokenSalt=$tokenSalt;
 		return $this;
 	}
 
-	# verify
-
+	/**
+	 * verify
+	 */
 	public function verify(){
 		
 		if(empty(Request::$post["__token"])){
@@ -92,8 +98,9 @@ class FormPackerUI extends FormPacker{
 	private $method="post";
 	public $cssFramework=null;
 
-	# start
-
+	/**
+	 * start
+	 */
 	public function start($option=null){
 		$str='<form';
 
@@ -121,8 +128,9 @@ class FormPackerUI extends FormPacker{
 		return $str."\n";
 	}
 
-	# end
-
+	/**
+	 * end
+	 */
 	public function end(){
 
 		$this->cssFramework=null;
@@ -130,8 +138,9 @@ class FormPackerUI extends FormPacker{
 
 	}
 
-	# set Input
-
+	/**
+	 * setInput
+	 */
 	public function setInput($name,$option=null){
 		$str='<input';
 
@@ -202,15 +211,18 @@ class FormPackerUI extends FormPacker{
 		$str.=">";
 		return $str."\n";
 	}
-	# set Hidden
 
+	/**
+	 * setHidden
+	 */
 	public function setHidden($name,$option=null){
 		$option["type"]="hidden";
 		return $this->setInput($name,$option);
 	}
 
-	# set Textarea
-
+	/**
+	 * setTextarea
+	 */
 	public function setTextarea($name,$option=null){
 		$str='<textarea';
 
@@ -276,8 +288,9 @@ class FormPackerUI extends FormPacker{
 		return $str."\n";
 	}
 
-	# set Radio
-
+	/**
+	 * setRadio
+	 */
 	public function setRadio($name,$values=null,$option=null){
 
 		$str="";
@@ -318,8 +331,9 @@ class FormPackerUI extends FormPacker{
 		return $str;
 	}
 
-	# set Pulldown
-
+	/**
+	 * setPulldown
+	 */
 	public function setPulldown($name,$values=null,$option=null){
 
 		$str="<select";
@@ -404,8 +418,9 @@ class FormPackerUI extends FormPacker{
 
 	}
 
-	# setCheckbox
-
+	/**
+	 * setCheckbox
+	 */
 	public function setCheckbox($name0,$values=null,$option=null){
 
 		$str="";
@@ -457,9 +472,10 @@ class FormPackerUI extends FormPacker{
 		return $str;
 
 	}
-	
-	# setToken
 
+	/**
+	 * setToken
+	 */
 	public function setToken($option=null){
 
 		$url=Request::$params["url"];
@@ -469,17 +485,18 @@ class FormPackerUI extends FormPacker{
 		return $token;
 	}
 
-	
-	# setTokenHidden
-
+	/**
+	 * setTokenHidden
+	 */
 	public function setTokenHidden($option=null){
 		$option["value"]=$this->setToken();
 		$option["fixedValue"]=true;
 		return $this->setHidden("__token",$option);
 	}
 
-	# setFile
-
+	/**
+	 * setFile
+	 */
 	public function setFile($name,$option=null){
 		
 		$option["type"]="file";
@@ -487,8 +504,9 @@ class FormPackerUI extends FormPacker{
 
 	}
 
-	# setButton
-
+	/**
+	 * setButton
+	 */
 	public function setButton($name,$option=null){
 
 		$str="<input";
@@ -506,8 +524,9 @@ class FormPackerUI extends FormPacker{
 
 	}
 
-	# setError
-
+	/**
+	 * setError
+	 */
 	public function setError($name,$option=null){
 
 		$str="<div";
@@ -568,7 +587,9 @@ class FormPackerUI extends FormPacker{
 		return $str;
 	}
 
-	# getErrorMessage
+	/**
+	 * getErrorMessage
+	 */
 	public function getErrorMessage($name=null){
 		if($name){
 			return $this->_getErrorMessage($name);
@@ -579,6 +600,9 @@ class FormPackerUI extends FormPacker{
 		}
 	}
 
+	/**
+	 * (private)_requestCheck
+	 */
 	private function _requestCheck($name,$defValue=null){
 
 		$getData=null;
@@ -658,6 +682,9 @@ class FormPackerUI extends FormPacker{
 
 	}
 
+	/**
+	 * (private)_setTagAttribute
+	 */
 	private function _setTagAttribute($str,$option){
 
 		if(is_array($option)){
@@ -670,6 +697,9 @@ class FormPackerUI extends FormPacker{
 
 	}
 
+	/**
+	 * (private)_setName
+	 */
 	private function _setName($name){
 		$names=explode(".",$name);
 
@@ -687,6 +717,9 @@ class FormPackerUI extends FormPacker{
 
 	}
 
+	/**
+	 * (private)_getErrorMessage
+	 */
 	private function _getErrorMessage($name){
 
 		$buff=self::$errorMessage;

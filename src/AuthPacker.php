@@ -1,18 +1,19 @@
 <?php
 
-/*
+/**
+ * 
+ * [mk2 standard packer]
+ * AuthPacker
+ * 
+ * A database table authentication component.
+ * Copylight (C) Nakajima Satoru 2020.
+ * URL:https://www.mk2-php.com/
+ *
+ */
 
-- mk2 standard packer -
+namespace mk2\packer;
 
-AuthPacker
-
-A database table authentication component.
-
-Copylight (C) Nakajima Satoru 2020.
-
-*/
-
-namespace mk2\core;
+use mk2\core\Import;
 
 Import::Packer("AuthBase");
 
@@ -31,8 +32,9 @@ class AuthPacker extends AuthBasePacker{
 		],
 	];
 	
-	# login
-
+	/**
+	 * login
+	 */
 	public function login($post,$forceLoginLimitter=false){
 
 		if(empty($this->dbTable["table"])){
@@ -119,8 +121,9 @@ class AuthPacker extends AuthBasePacker{
 
 	}
 
-	# getPasswordHash
-
+	/**
+	 * getPasswordHash
+	 */
 	public function getPasswordHash($password){
 
 		$algo="sha256";
@@ -145,8 +148,9 @@ class AuthPacker extends AuthBasePacker{
 		return $hash;
 	}
 
-	# forceLogin
-
+	/**
+	 * forceLogin
+	 */
 	public function forceLogin($username){
 
 		return $this->login([$this->dbTable["username"]=>$username]);

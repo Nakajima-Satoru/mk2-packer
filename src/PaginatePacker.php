@@ -1,21 +1,24 @@
 <?php
 
-/*
+/**
+ * 
+ * [mk2 standard packer]
+ * PaginatePacker
+ * 
+ * Copylight (C) Nakajima Satoru 2020.
+ * URL:https://www.mk2-php.com/
+ *
+ */
 
-- mk2 standard packer -
+namespace mk2\packer;
 
-PaginatePacker
-
-Copylight (C) Nakajima Satoru 2020.
-
-*/
-
-namespace mk2\core;
+use mk2\core\PackerUI;
 
 class PaginatePackerUI extends PackerUI{
 
-	# output
-
+	/**
+	 * output
+	 */
 	public function output($paginate){
 
 		$str="";

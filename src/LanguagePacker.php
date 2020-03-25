@@ -1,18 +1,19 @@
 <?php
 
-/*
+/**
+ * 
+ * [mk2 standard packer]
+ * LanguagePacker
+ * 
+ * Language-specific packer.
+ * Copylight (C) Nakajima Satoru 2020.
+ * URL:https://www.mk2-php.com/
+ *
+ */
 
-- mk2 standard packer -
+namespace mk2\packer;
 
-LanguagePacker
-
-Language-specific packer.
-
-Copylight (C) Nakajima Satoru 2020.
-
-*/
-
-namespace mk2\core;
+use mk2\core\Packer;
 
 class LanguagePacker extends Packer{
 
@@ -151,6 +152,10 @@ class LanguagePacker extends Packer{
 
 	}
 }
+
+/**
+ * LanguagePackerUI
+ */
 class LanguagePackerUI extends LanguagePacker{
 
 	/**

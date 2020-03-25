@@ -1,18 +1,19 @@
 <?php
 
-/*
+/**
+ * 
+ * [mk2 standard packer]
+ * SessionPacker
+ * 
+ * session data management component.
+ * Copylight (C) Nakajima Satoru 2020.
+ * URL:https://www.mk2-php.com/
+ *
+ */
 
-- mk2 standard packer -
+namespace mk2\packer;
 
-SessionPacker
-
-session data management component.
-
-Copylight (C) Nakajima Satoru 2020.
-
-*/
-
-namespace mk2\core;
+use mk2\core\Packer;
 
 class SessionPacker extends Packer{
 
@@ -29,8 +30,9 @@ class SessionPacker extends Packer{
 		"Encrypt"=>"Encrypt",
 	];
 
-	# __construct
-
+	/**
+	 * __construct
+	 */
 	public function __construct($option){
 		parent::__construct($option);
 
@@ -45,8 +47,9 @@ class SessionPacker extends Packer{
 		@session_start();
 	}
 
-	# session data write
-
+	/**
+	 * write
+	 */
 	public function write($name,$value,$secondPw=null){
 
 		$source=$this->read();
@@ -80,8 +83,9 @@ class SessionPacker extends Packer{
 		return $this;
 	}
 
-	# _write
-
+	/**
+	 * (private)_write
+	 */
 	private function _write($source){
 
 		if(!empty($this->limit)){
@@ -97,8 +101,9 @@ class SessionPacker extends Packer{
 
 	}
 
-	# read
-
+	/**
+	 * read
+	 */
 	public function read($name=null,$secondPw=null){
 
 		if(!empty($_SESSION[$this->name])){
@@ -160,8 +165,9 @@ class SessionPacker extends Packer{
 
 	}
 
-	# flash
-
+	/**
+	 * flash
+	 */
 	public function flash($name){
 
 		$output=$this->read($name);
@@ -171,8 +177,9 @@ class SessionPacker extends Packer{
 
 	}
 
-	# delete
-
+	/**
+	 * delete
+	 */
 	public function delete($name=null){
 
 		$source=$this->read();
@@ -191,8 +198,9 @@ class SessionPacker extends Packer{
 		}
 	}
 
-	# readCache
-
+	/**
+	 * readCache
+	 */
 	public function readCache($name,$refreshLimit,$callback){
 
 		$buff=$this->read($name);
@@ -219,8 +227,9 @@ class SessionPacker extends Packer{
 
 	}
 
-	# get limit
-
+	/**
+	 * get_limit
+	 */
 	public function get_limit(){
 		$limit=$this->read("__limit",array(
 			"on_limit"=>true,
@@ -228,15 +237,18 @@ class SessionPacker extends Packer{
 		return $limit;
 	}
 
-	# change session id
-
+	/**
+	 * change_ssid
+	 */
 	public function change_ssid(){
 		session_regenerate_id(true);
 	}
 
-	# get session id
-
+	/**
+	 * get_ssid
+	 */
 	public function get_ssid(){
 		return session_id();
 	}
+
 }

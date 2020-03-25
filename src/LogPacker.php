@@ -1,18 +1,19 @@
 <?php
 
-/*
+/**
+ * 
+ * [mk2 standard packer]
+ * LogPacker
+ * 
+ * Log output component.
+ * Copylight (C) Nakajima Satoru 2020.
+ * URL:https://www.mk2-php.com/
+ *
+ */
 
-- mk2 standard packer -
+namespace mk2\packer;
 
-LogPacker
-
-Log output component.
-
-Copylight (C) Nakajima Satoru 2020.
-
-*/
-
-namespace mk2\core;
+use mk2\core\Packer;
 
 class LogPacker extends Packer{
 
@@ -28,8 +29,9 @@ class LogPacker extends Packer{
 		"splitDate"=>"Ymd",
 	];
 
-	# writeError
-
+	/**
+	 * writeError
+	 */
 	public function writeError($error){
 
 		$strings="";
@@ -60,8 +62,9 @@ class LogPacker extends Packer{
 
 	}
 
-	# (privte) _writeDefault
-
+	/**
+	 * (privte) _writeDefault
+	 */
 	private function _writeDefault($mode="error"){
 		
 		if(!is_dir($this->tmpDir)){
@@ -70,8 +73,9 @@ class LogPacker extends Packer{
 
 	}
 
-	# (private) _writeStrError
-
+	/**
+	 * (privte) _writeStrError
+	 */
 	private function _writeStrError($error){
 
 		$lof=" | ";
@@ -103,8 +107,9 @@ class LogPacker extends Packer{
 		return $str;
 	}
 
-	# writeAccess
-
+	/**
+	 * writeAccess
+	 */
 	public function writeAccess(){
 
 		$strings="";
@@ -135,8 +140,9 @@ class LogPacker extends Packer{
 
 	}
 
-	# (private) _writeStrAccess
-
+	/**
+	 * (private) _writeStrAccess
+	 */
 	private function _writeStrAccess(){
 
 		$lof=" | ";
@@ -160,8 +166,9 @@ class LogPacker extends Packer{
 
 	}
 
-	# write
-
+	/**
+	 * write
+	 */
 	public function write($fileName,$message,$lof=false){
 
 		$strings="";
@@ -180,8 +187,9 @@ class LogPacker extends Packer{
 
 	}
 
-	# (private) _writeStr
-
+	/**
+	 * (private) _writeStr
+	 */
 	private function _writeStr($message,$simple){
 
 		$lof=" | ";

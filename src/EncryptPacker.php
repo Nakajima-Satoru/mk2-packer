@@ -1,18 +1,19 @@
 <?php
 
-/*
+/**
+ * 
+ * [mk2 standard packer]
+ * EncryptPacker
+ * 
+ * Data encryption/decryption components.
+ * Copylight (C) Nakajima Satoru 2020.
+ * URL:https://www.mk2-php.com/
+ *
+ */
 
-- mk2 standard packer -
+namespace mk2\packer;
 
-EncryptPacker
-
-Data encryption/decryption components.
-
-Copylight (C) Nakajima Satoru 2020.
-
-*/
-
-namespace mk2\core;
+use mk2\core\Packer;
 
 class EncryptPacker extends Packer{
 
@@ -20,15 +21,17 @@ class EncryptPacker extends Packer{
 	public $hashNumber="yerougaf09rgfar56afa4fa1faea4f1dd5d596a8r4f";
 	public $password="J0aarogi40495aaajdoe22z5d9a8raf4ar1awf6a5dar1e2gng";
 
-	# enclist
-
+	/**
+	 * enclist
+	 */
 	public function enclist(){
 		$method_list = openssl_get_cipher_methods();
 		return $method_list;
 	}
 
-	# encode
-
+	/**
+	 * encode
+	 */
 	public function encode($input,$option=array()){
 
 		if(is_array($input)){
@@ -69,8 +72,9 @@ class EncryptPacker extends Packer{
 		return $encrypted;
 	}
 
-	# decode
-
+	/**
+	 * decode
+	 */
 	public function decode($input,$option=array()){
 
 		if(!empty($option["encType"])){
@@ -113,5 +117,5 @@ class EncryptPacker extends Packer{
 		}
 		return $output;
 	}
-}
 
+}

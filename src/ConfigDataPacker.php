@@ -1,18 +1,19 @@
 <?php
 
-/*
+/**
+ * 
+ * [mk2 standard packer]
+ * ConfigDataPacker
+ * 
+ * For shared data management.
+ * Copylight (C) Nakajima Satoru 2020.
+ * URL:https://www.mk2-php.com/
+ *
+ */
 
-- mk2 standard packer -
+namespace mk2\packer;
 
-ConfigDataPacker
-
-For shared data management.
-
-Copylight (C) Nakajima Satoru 2020.
-
-*/
-
-namespace mk2\core;
+use mk2\core\Packer;
 
 class ConfigDataPacker extends Packer{
 
@@ -40,30 +41,21 @@ class ConfigDataPacker extends Packer{
 		],
 	];
 
-	# __construct
-
+	/**
+	 * __construct
+	 */
 	public function __construct(){
 		parent::__construct();
 
 		$this->setPacker([
 			$this->usePackerClass["Cache"],
-/*
-			"Cache"=>[
-				"mode"=>"file",
-				"name"=>"RCACHECONFIG",
-				"encrypt"=>[
-					"encType"=>"aes-256-cbc",
-					"hashNumber"=>"Euf9ar0e98ga9ae9aifaah;o43ijIPFIE9g8a-0erajEPOEIRga8970434j;loDIRoeigGGE",
-					"password"=>"SieroiDIorjepga098423jGaEi098fa6f51ji2904jfapreaijg9044j5io598f0a7099gj",
-				],
-			],
-*/
 		]);
 
 	}
 
-	# read
-
+	/**
+	 * read
+	 */
 	public function read($name=null){
 
 		$buff=$this->Packer->Cache->buffering($this->cfdName,0,function(){
@@ -93,8 +85,9 @@ class ConfigDataPacker extends Packer{
 
 	}
 
-	# write
-
+	/**
+	 * write
+	 */
 	public function write($data){
 
 		// model setting
@@ -150,8 +143,9 @@ class ConfigDataPacker extends Packer{
 		return $this->read();
 	}
 
-	# refresh
-
+	/**
+	 * refresh
+	 */
 	public function refresh(){
 
 		// buffering refresh allow
@@ -160,8 +154,9 @@ class ConfigDataPacker extends Packer{
 
 	}
 
-	# allClear
-
+	/**
+	 * allClear
+	 */
 	public function allClear(){
 
 		// model setting
