@@ -12,9 +12,10 @@
 
 namespace mk2\packer;
 
-use mk2\core\PackerUI;
+use mk2\core\Packer;
 
-class PaginatePackerUI extends PackerUI{
+class PaginatePacker extends Packer{}
+class PaginatePackerUI extends PaginatePacker{
 
 	/**
 	 * output
