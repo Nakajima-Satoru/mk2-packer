@@ -173,7 +173,7 @@ class FormPackerUI extends FormPacker{
 		# css Framework case...
 		if($this->cssFramework=="bootstrap"){
 
-			if($option["type"]!="radio" && $option["type"]!="checkbox"){
+			if($option["type"]!="radio" && $option["type"]!="checkbox" && $option["type"]!="submit" && $option["type"]!="button"){
 
 				# is bootstrap...
 
@@ -319,10 +319,20 @@ class FormPackerUI extends FormPacker{
 					unset($option["fixedValue"]);
 				}
 
-				//$str.='<div class="radio">';
-				$str.=$this->setInput($name,$opt);
-				$str.='<label for="'.$opt["id"].'">'.$textname.'</label>';
-				//$str.="</div>";
+				if(empty($opt["class"])){
+					$opt["class"]="form-check-input";
+				}
+				else{
+					$opt["class"].=" form-check-input";
+				}
+				
+				if($this->cssFramework=="bootstrap"){
+					// if bootstra....
+					$strHead='<div class="form-check form-check-inline">';
+					$strFoot='<label for="'.$opt["id"].'" class="form-check-label">'.$textname.'</label></div>';
+				}
+
+				$str.=$strHead.$this->setInput($name,$opt).$strFoot;
 
 			}
 
@@ -459,11 +469,23 @@ class FormPackerUI extends FormPacker{
 				else{
 					unset($option["fixedValue"]);
 				}
+				
+				if(empty($opt["class"])){
+					$opt["class"]="form-check-input";
+				}
+				else{
+					$opt["class"].=" form-check-input";
+				}
 
-				$str.='<div class="checkbox">';
-				$str.=$this->setInput($name2,$opt);
-				$str.='<label for="'.$opt["id"].'">'.$textname.'</label>';
-				$str.='</div>';
+
+				if($this->cssFramework=="bootstrap"){
+					// if bootstra....
+					$strHead='<div class="form-check form-check-inline">';
+					$strFoot='<label for="'.$opt["id"].'" class="form-check-label">'.$textname.'</label></div>';
+				}
+
+				$str.=$strHead.$this->setInput($name2,$opt).$strFoot;
+
 				$ind++;
 			}
 
