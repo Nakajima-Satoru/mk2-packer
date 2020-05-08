@@ -435,27 +435,42 @@ class FormPackerUI extends FormPacker{
 
 		$str="";
 
-		if(is_array($values)){
+		if(!is_array($values)){
+			$values=[1=>$values];
+			$singles=true;
+		}
 
-			$ind=0;
-			foreach($values as $key=>$textname){
+		$ind=0;
+		foreach($values as $key=>$textname){
 
+			$name2=$name0;
+			if(empty($singles)){
 				$name2=$name0.".".$ind;
+			}
 
-				$chkjuge=false;
-				if(!empty($option["checked"])){
+			$chkjuge=false;
+			if(!empty($option["checked"])){
+				if(!empty($singles)){
+					if($key==$option["checked"]){
+						$chkjuge=true;
+						break;
+					}
+				}
+				else
+				{
 					foreach($option["checked"] as $chk_){
 						if($key==$chk_){
 							$chkjuge=true;
 							break;
 						}
-					}
+					}	
 				}
+			}
 
-				$ans=$this->_requestCheck($name2,$chkjuge);
+			$ans=$this->_requestCheck($name2,$chkjuge);
 
-				$opt=$option;
-				unset($opt["checked"]);
+			$opt=$option;
+			unset($opt["checked"]);
 
 				$opt["value"]=$key;
 				$opt["type"]="checkbox";
@@ -487,7 +502,6 @@ class FormPackerUI extends FormPacker{
 				$str.=$strHead.$this->setInput($name2,$opt).$strFoot;
 
 				$ind++;
-			}
 
 		}
 		
