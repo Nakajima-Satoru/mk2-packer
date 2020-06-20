@@ -48,7 +48,7 @@ class ConfigDataPacker extends Packer{
 		parent::__construct();
 
 		$this->setPacker([
-			$this->usePackerClass["Cache"],
+			$this->getUsePackerClass("Cache"),
 		]);
 
 	}
@@ -58,7 +58,7 @@ class ConfigDataPacker extends Packer{
 	 */
 	public function read($name=null){
 
-		$buff=$this->Packer->Cache->buffering($this->cfdName,0,function(){
+		$buff=$this->Packer->{$this->getUsePackerClass("Cache")}->buffering($this->cfdName,0,function(){
 
 			// model setting
 			$table=$this->dbTable["table"];
@@ -138,7 +138,7 @@ class ConfigDataPacker extends Packer{
 		}
 
 		// buffering refresh allow
-		$this->Packer->Cache->bufferingAllow($this->cfdName);
+		$this->Packer->{$this->getUsePackerClass("Cache")}->bufferingAllow($this->cfdName);
 
 		return $this->read();
 	}
@@ -149,7 +149,7 @@ class ConfigDataPacker extends Packer{
 	public function refresh(){
 
 		// buffering refresh allow
-		$this->Packer->Cache->bufferingAllow($this->cfdName);
+		$this->Packer->{$this->getUsePackerClass("Cache")}->bufferingAllow($this->cfdName);
 		return $this->read();
 
 	}
@@ -167,7 +167,20 @@ class ConfigDataPacker extends Packer{
 		$this->Table->{$table}->delete()->allDel();
 
 		// cache data delete
-		$this->Packer->Cache->delete($this->cfdName);
+		$this->Packer->{$this->getUsePackerClass("Cache")}->delete($this->cfdName);
+
+	}
+
+	private function getUsePackerClass($name){
+
+		$buff=$this->usePackerClass[$name];
+
+		if(is_array($buff)){
+			return key($buff);
+		}
+		else{
+			return $buff;
+		}
 
 	}
 

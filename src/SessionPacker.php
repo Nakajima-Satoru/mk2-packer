@@ -17,7 +17,7 @@ use mk2\core\Packer;
 
 class SessionPacker extends Packer{
 
-	public $tmpPath=MK2_PATH_APP_TEMPORARY."session";
+	public $tmpPath=null; //Ex. MK2_PATH_APP_TEMPORARY."session";
 	public $name="mk2sess";
 	public $limit=10800;
 	public $encrypt=[
@@ -37,7 +37,7 @@ class SessionPacker extends Packer{
 		parent::__construct($option);
 
 		$this->setPacker([
-			$this->usePackerClass["Encrypt"],
+			$this->getUsePackerClass("Encrypt"),
 		]);
 
 		if(!empty($this->tmpPath)){
@@ -56,7 +56,7 @@ class SessionPacker extends Packer{
 
 		//second Password...
 		if($secondPw){
-			$value=$this->Packer->Encrypt->encode($value,[
+			$value=$this->Packer->{$this->getUsePackerClass("Encrypt")}->encode($value,[
 				"password"=>$secondPw,
 			]);
 		}
@@ -75,7 +75,7 @@ class SessionPacker extends Packer{
 		}
 
 		if(!empty($this->encrypt)){
-			$source=$this->Packer->Encrypt->encode($source,$this->encrypt);
+			$source=$this->Packer->{$this->getUsePackerClass("Encrypt")}->encode($source,$this->encrypt);
 		}
 
 		$_SESSION[$this->name]=$source;
@@ -94,7 +94,7 @@ class SessionPacker extends Packer{
 		}
 
 		if(!empty($this->encrypt)){
-			$source=$this->Packer->Encrypt->encode($source,$this->encrypt);
+			$source=$this->Packer->{$this->getUsePackerClass("Encrypt")}->encode($source,$this->encrypt);
 		}
 
 		$_SESSION[$this->name]=$source;
@@ -115,7 +115,7 @@ class SessionPacker extends Packer{
 		}
 
 		if(!empty($this->encrypt)){
-			$source=$this->Packer->Encrypt->decode($source,$this->encrypt);
+			$source=$this->Packer->{$this->getUsePackerClass("Encrypt")}->decode($source,$this->encrypt);
 		}
 
 		if(!empty($this->limit)){
@@ -156,7 +156,7 @@ class SessionPacker extends Packer{
 		}
 
 		if($secondPw){
-			$output=$this->Packer->Encrypt->decode($output,[
+			$output=$this->Packer->{$this->getUsePackerClass("Encrypt")}->decode($output,[
 				"password"=>$secondPw,
 			]);
 		}
@@ -249,6 +249,19 @@ class SessionPacker extends Packer{
 	 */
 	public function get_ssid(){
 		return session_id();
+	}
+
+	private function getUsePackerClass($name){
+
+		$buff=$this->usePackerClass[$name];
+
+		if(is_array($buff)){
+			return key($buff);
+		}
+		else{
+			return $buff;
+		}
+
 	}
 
 }

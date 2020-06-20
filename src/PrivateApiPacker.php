@@ -49,7 +49,7 @@ class PrivateApiPacker extends Packer{
 		parent::__construct($option);
 
 		$this->setPacker([
-			$this->usePackerClass["Curl"],
+			$this->getUsePackerClass("Curl"),
 		]);
 
 	}
@@ -76,7 +76,7 @@ class PrivateApiPacker extends Packer{
 		// token set
 		$headerOption["token"]=$this->getPrivateToken($apiName);
 
-		$res=$this->Packer->Curl->accessPost($url,$requestData,null,$headerOption);
+		$res=$this->Packer->{$this->getUsePackerClass("Curl")}->accessPost($url,$requestData,null,$headerOption);
 
 		return $res;
 
@@ -186,4 +186,16 @@ class PrivateApiPacker extends Packer{
 		return $jugement;
 	}
 
+	private function getUsePackerClass($name){
+
+		$buff=$this->usePackerClass[$name];
+
+		if(is_array($buff)){
+			return key($buff);
+		}
+		else{
+			return $buff;
+		}
+
+	}
 }

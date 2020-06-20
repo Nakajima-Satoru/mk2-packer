@@ -39,7 +39,7 @@ class CookiePacker extends Packer{
 		parent::__construct($option);
 
 		$this->setPacker([
-			$this->usePackerClass["Encrypt"],
+			$this->getUsePackerClass("Encrypt"),
 		]);
 
 	}
@@ -57,7 +57,7 @@ class CookiePacker extends Packer{
 			$cookie_name=$name;
 		}
 
-		$value=$this->Packer->Encrypt->encode($value,$this->encrypt);
+		$value=$this->Packer->{$this->getUsePackerClass("Encrypt")}->encode($value,$this->encrypt);
 
 		if(!empty($option["value_direct"])){
 			$value=$value;
@@ -141,7 +141,7 @@ class CookiePacker extends Packer{
 			return null;
 		}
 
-		$source=$this->Packer->Encrypt->decode($source,$this->encrypt);
+		$source=$this->Packer->{$this->getUsePackerClass("Encrypt")}->decode($source,$this->encrypt);
 
 		return $source;
 	}
@@ -199,4 +199,16 @@ class CookiePacker extends Packer{
 		return;
 	}
 
+	private function getUsePackerClass($name){
+
+		$buff=$this->usePackerClass[$name];
+
+		if(is_array($buff)){
+			return key($buff);
+		}
+		else{
+			return $buff;
+		}
+
+	}
 }

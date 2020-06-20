@@ -40,12 +40,12 @@ class LanguagePacker extends Packer{
 		parent::__construct($option);
 
 		$this->setPacker([
-			$this->usePackerClass["Session"],
+			$this->getUsePackerClass("Session"),
 		]);
 
 		self::$_languageList=$this->languageList;
 
-		if($nowLang=$this->Packer->Session->read("_language")){
+		if($nowLang=$this->Packer->{$this->getUsePackerClass("Session")}->read("_language")){
 
 			if(!empty(self::$_languageList[$nowLang])){
 				self::$_lang=$nowLang;
@@ -53,14 +53,14 @@ class LanguagePacker extends Packer{
 			else
 			{
 				self::$_lang=$this->defaultLanguage;
-				$this->Packer->Session->write("_language",$this->defaultLanguage);
-				$this->Packer->Session->write("_languageName",self::$_languageList[$this->defaultLanguage]);
+				$this->Packer->{$this->getUsePackerClass("Session")}->write("_language",$this->defaultLanguage);
+				$this->Packer->{$this->getUsePackerClass("Session")}->write("_languageName",self::$_languageList[$this->defaultLanguage]);
 			}
 		}
 		else{
 			self::$_lang=$this->defaultLanguage;
-			$this->Packer->Session->write("_language",$this->defaultLanguage);
-			$this->Packer->Session->write("_languageName",self::$_languageList[$this->defaultLanguage]);
+			$this->Packer->{$this->getUsePackerClass("Session")}->write("_language",$this->defaultLanguage);
+			$this->Packer->{$this->getUsePackerClass("Session")}->write("_languageName",self::$_languageList[$this->defaultLanguage]);
 		}
 
 	}
@@ -92,8 +92,8 @@ class LanguagePacker extends Packer{
 	public function setLanguage($lang){
 		if(!empty(self::$_languageList[$lang])){
 			self::$_lang=$lang;
-			$this->Packer->Session->write("_language",$lang);
-			$this->Packer->Session->write("_languageName",self::$_languageList[$lang]);
+			$this->Packer->{$this->getUsePackerClass("Session")}->write("_language",$lang);
+			$this->Packer->{$this->getUsePackerClass("Session")}->write("_languageName",self::$_languageList[$lang]);
 		}
 		return $this;
 	}
@@ -149,6 +149,19 @@ class LanguagePacker extends Packer{
 		}
 
 		return parent::getViewPart($path);
+
+	}
+
+	private function getUsePackerClass($name){
+
+		$buff=$this->usePackerClass[$name];
+
+		if(is_array($buff)){
+			return key($buff);
+		}
+		else{
+			return $buff;
+		}
 
 	}
 }

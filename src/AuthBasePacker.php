@@ -39,7 +39,7 @@ class AuthBasePacker extends Packer{
 		parent::__construct($option);
 
 		$this->setPacker([
-			$this->usePackerClass["Session"],
+			$this->getUsePackerClass("Session"),
 		]);
 
 	}
@@ -65,7 +65,7 @@ class AuthBasePacker extends Packer{
 	 */
 	public function getAuthData(){
 		
-		$getData=$this->Packer->Session->read($this->authName);
+		$getData=$this->Packer->{$this->getUsePackerClass("Session")}->read($this->authName);
 		if($getData){
 			return $getData["data"];
 		}
@@ -76,8 +76,8 @@ class AuthBasePacker extends Packer{
 	 */
 	public function refresh($data){
 		$data=$this->convertAuthData($data);
-		$this->Packer->Session->change_ssid();
-		$this->Packer->Session->write($this->authName,$data);
+		$this->Packer->{$this->getUsePackerClass("Session")}->change_ssid();
+		$this->Packer->{$this->getUsePackerClass("Session")}->write($this->authName,$data);
 	}
 
 	/**
@@ -85,21 +85,21 @@ class AuthBasePacker extends Packer{
 	 */
 	public function loginCheck(){
 
-		if(!empty($this->Packer->Session->read($this->authName))){
+		if(!empty($this->Packer->{$this->getUsePackerClass("Session")}->read($this->authName))){
 				
 			if($this->_convertUrl(Request::$params["url"])==$this->_convertUrl($this->redirect["login"])){
 				$this->redirect($this->redirect["logined"]);
 			}
 			else{
 
-				$authData=$this->Packer->Session->read($this->authName);
+				$authData=$this->Packer->{$this->getUsePackerClass("Session")}->read($this->authName);
 
 				# parityCheck
 				$buff=$authData["data"];
 				$parityCode=$this->_makeParityCode($buff,$authData["loginDate"]);
 
 				if($parityCode!=$authData["parityCode"]){
-					$this->Packer->Session->delete($this->authName);
+					$this->Packer->{$this->getUsePackerClass("Session")}->delete($this->authName);
 					$this->redirect($this->redirect["login"]);
 				}
 
@@ -136,8 +136,8 @@ class AuthBasePacker extends Packer{
 	 * logout
 	 */
 	public function logout(){
-		$this->Packer->Session->delete($this->authName);
-		$this->Packer->Session->change_ssid();		
+		$this->Packer->{$this->getUsePackerClass("Session")}->delete($this->authName);
+		$this->Packer->{$this->getUsePackerClass("Session")}->change_ssid();		
 	}
 
 	/**
@@ -180,5 +180,17 @@ class AuthBasePacker extends Packer{
 		return $parityCode;
 
 	}
+	
+	private function getUsePackerClass($name){
 
+		$buff=$this->usePackerClass[$name];
+
+		if(is_array($buff)){
+			return key($buff);
+		}
+		else{
+			return $buff;
+		}
+
+	}
 }

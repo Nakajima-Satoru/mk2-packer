@@ -93,7 +93,7 @@ class CachePacker extends Packer{
 						$encOpt=$this->encrypt;
 						$encOpt["password"]=$secondPw;
 
-						$get=$this->Packer->Encrypt->decode($get,$encOpt);
+						$get=$this->Packer->{$this->usePackerClass["Encrypt"]}->decode($get,$encOpt);
 					}
 				}
 
@@ -198,7 +198,7 @@ class CachePacker extends Packer{
 			$encOpt=$this->encrypt;
 			$encOpt["password"]=$secondPw;
 
-			$get[$name]=$this->Packer->Encrypt->encode($value,$encOpt);
+			$get[$name]=$this->Packer->{$this->usePackerClass["Encrypt"]}->encode($value,$encOpt);
 
 		}
 		else
@@ -305,7 +305,7 @@ class CachePacker extends Packer{
 	private function _writeFile($name,$value){
 
 		if(!empty($this->encrypt)){
-			$value=$this->Packer->Encrypt->encode($value,$this->encrypt);
+			$value=$this->Packer->{$this->usePackerClass["Encrypt"]}->encode($value,$this->encrypt);
 		}
 		else
 		{
@@ -352,7 +352,7 @@ class CachePacker extends Packer{
 		$get[$name]=$value[$name];
 
 		if(!empty($this->encrypt)){
-			$get=$this->Packer->Encrypt->encode($get,$this->encrypt);
+			$get=$this->Packer->{$this->usePackerClass["Encrypt"]}->encode($get,$this->encrypt);
 		}
 
 		$res=apcu_store($memoryPath,$get,$this->limit);
@@ -390,7 +390,7 @@ class CachePacker extends Packer{
 					fclose($fs);
 
 					if(!empty($this->encrypt)){
-						$get=$this->Packer->Encrypt->decode($get,$this->encrypt);
+						$get=$this->Packer->{$this->usePackerClass["Encrypt"]}->decode($get,$this->encrypt);
 					}
 					else
 					{
@@ -409,7 +409,7 @@ class CachePacker extends Packer{
 					fclose($fs);
 
 					if(!empty($this->encrypt)){
-						$buff=$this->Packer->Encrypt->decode($buff,$this->encrypt);
+						$buff=$this->Packer->{$this->usePackerClass["Encrypt"]}->decode($buff,$this->encrypt);
 					}
 					else
 					{
@@ -434,7 +434,7 @@ class CachePacker extends Packer{
 					fclose($fs);
 
 					if(!empty($this->encrypt)){
-						$get=$this->Packer->Encrypt->decode($get,$this->encrypt);
+						$get=$this->Packer->{$this->usePackerClass["Encrypt"]}->decode($get,$this->encrypt);
 					}
 					else
 					{
@@ -453,7 +453,7 @@ class CachePacker extends Packer{
 					fclose($fs);
 
 					if(!empty($this->encrypt)){
-						$buff=$this->Packer->Encrypt->decode($buff,$this->encrypt);
+						$buff=$this->Packer->{$this->usePackerClass["Encrypt"]}->decode($buff,$this->encrypt);
 					}
 					else
 					{
@@ -488,7 +488,7 @@ class CachePacker extends Packer{
 		$get=apcu_fetch($memoryPath);
 
 		if(!empty($this->encrypt)){
-			$get=$this->Packer->Encrypt->decode($get,$this->encrypt);
+			$get=$this->Packer->{$this->usePackerClass["Encrypt"]}->decode($get,$this->encrypt);
 		}
 
 		if($name){
@@ -580,7 +580,7 @@ class CachePacker extends Packer{
 		}
 
 		if(!empty($this->encrypt)){
-			$get=$this->Packer->Encrypt->encode($get,$this->encrypt);
+			$get=$this->Packer->{$this->usePackerClass["Encrypt"]}->encode($get,$this->encrypt);
 		}
 
 		apcu_store($memoryPath,$get,$this->limit);
