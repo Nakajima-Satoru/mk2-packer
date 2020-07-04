@@ -392,6 +392,12 @@ class FormPackerUI extends FormPacker{
 			unset($option["empty"]);
 		}
 
+		if(!$ans){
+			if(!empty($option["value"])){
+				$ans=$option["value"];
+			}
+		}
+
 		if(empty($option["fixedValue"])){
 
 			if(is_array($values)){
