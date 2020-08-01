@@ -152,13 +152,13 @@ class FormPackerUI extends FormPacker{
 		if($option["type"]!="radio" && $option["type"]!="checkbox"){
 
 			$defValue="";
-			if(!empty($option["value"])){
+			if(isset($option["value"])){
 				$defValue=$option["value"];
 			}
 			$ans=$this->_requestCheck($name,$defValue);
 
 			$value="";
-			if($ans){
+			if($ans!==""){
 				$value=$ans;
 			}
 
@@ -168,6 +168,7 @@ class FormPackerUI extends FormPacker{
 			else{
 				unset($option["fixedValue"]);
 			}
+
 		}
 
 		# css Framework case...
@@ -731,8 +732,10 @@ class FormPackerUI extends FormPacker{
 
 		if(is_array($option)){
 			foreach($option as $key=>$value){
-				$field=' '.$key.'="'.$value.'"';
-				$str.=$field;
+				if(!is_array($value)){
+					$field=' '.$key.'="'.$value.'"';
+					$str.=$field;	
+				}
 			}
 		}
 		return $str;
