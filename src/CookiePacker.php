@@ -123,7 +123,7 @@ class CookiePacker extends Packer{
 	/**
 	 * read
 	 */
-	public function read($name){
+	public function read($name=null){
 
 		if(!empty($this->name)){
 			$cookie_name=$this->name.$name;
