@@ -25,7 +25,6 @@ class EncryptPacker extends Packer{
 	public $privateKeyBits=4096;
 	public $privateKeyType=OPENSSL_KEYTYPE_RSA;
 
-
 	/**
 	 * enclist
 	 */
@@ -111,9 +110,9 @@ class EncryptPacker extends Packer{
 	}
 
 	/**
-	 * encodePublicKeyMake
+	 * encodePublicKeyAuto
 	 */
-	public function encodePublicKeyMake($input,$option=[]){
+	public function encodePublicKeyAuto($input,$option=[]){
 
 		$option=$this->_setOption($option);
 
@@ -175,9 +174,9 @@ class EncryptPacker extends Packer{
 	}
 
 	/**
-	 * encodePrivateKeyMake
+	 * encodePrivateKeyAuto
 	 */
-	public function encodePrivateKeyMake($input,$option=[]){
+	public function encodePrivateKeyAuto($input,$option=[]){
 
 		$option=$this->_setOption($option);
 
@@ -219,7 +218,9 @@ class EncryptPacker extends Packer{
 	/**
 	 * makeKeys
 	 */
-	public function makeKeys($option){
+	public function makeKeys($option=[]){
+
+		$option=$this->_setOption($option);
 
 		$config=[
 			"digest_alg" => $option["digestAlg"],
@@ -244,6 +245,94 @@ class EncryptPacker extends Packer{
 
 	}
 
+	/**
+	 * makeCsr
+	 */
+	public function makeCsr($dn,$privateKey,$option=[]){
+
+		// make csr
+		$csr=openssl_csr_new($dn, $privateKey);
+
+		if(!empty($option["resourceOutput"])){
+			return $csr;
+		}
+		else
+		{
+			// convert text for csr
+			openssl_csr_export($csr, $csrout);
+			return $csrout;
+		}
+	}
+
+	/**
+	 * makeCsrAuto
+	 */
+	public function makeCsrAuto($dn,$option=[]){
+
+		$makeKeys=$this->makeKeys($option);
+
+		$csr=$this->makeCsr($dn,$makeKeys["privateKey"],$option);
+
+		return [
+			"csr"=>$csr,
+			"publicKey"=>$makeKeys["publicKey"],
+			"privateKey"=>$makeKeys["privateKey"],
+		];
+
+	}
+
+	/**
+	 * makeCsrSign
+	 */
+	public function makeCsrSign($dn,$privateKey,$option=[]){
+
+		$option["resourceOutput"]=true;
+
+		// make csr 
+		$csr=$this->makeCsr($dn,$privateKey,$option);
+
+		$day=365;
+		if(!empty($option["day"])){
+			$day=$option["day"];
+		}
+
+		if(!empty($option["cacert"])){
+
+			$usercert=openssl_csr_sign($csr,$option["cacert"],$privateKey,$day,$option);
+
+		}
+		else
+		{
+
+			$usercert=openssl_csr_sign($csr,null,$privateKey,$day,$option);
+
+		}
+
+		openssl_x509_export($usercert, $certout);
+
+		return $certout;
+	
+	}
+
+	/**
+	 * makeCsrSignAuto
+	 */
+	public function makeCsrSignAuto($dn,$option=[]){
+
+		$makeKeys=$this->makeKeys($option);
+
+		$cert=$this->makeCsrSign($dn,$makeKeys["privateKey"],$option);
+
+		return [
+			"cert"=>$cert,
+			"publicKey"=>$makeKeys["publicKey"],
+			"privateKey"=>$makeKeys["privateKey"],
+		];
+	}
+
+	/**
+	 * (private) _setOption
+	 */
 	private function _setOption($option){
 
 		if(empty($option["encType"])){
