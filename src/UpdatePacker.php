@@ -33,17 +33,18 @@ class UpdatePacker extends Packer{
 			}
 		}
 	
+		$result=null;
 		if(version_compare($this->nowVersion,$newVersion,"<")){
 	
 			if(file_exists(self::UPDATOR_PATH."Updator.php")){
-				include(self::UPDATOR_PATH."Updator.php");
+				$result=include(self::UPDATOR_PATH."Updator.php");
 			}
 	
 			file_put_contents(self::NOWVERSION_FILE,$newVersion);
 	
 		}
 		
-		return true;
+		return $result;
 	
 	}
 	
