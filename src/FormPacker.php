@@ -506,12 +506,15 @@ class FormPackerUI extends FormPacker{
 					$strFoot='<label for="'.$opt["id"].'" class="form-check-label">'.$textname.'</label></div>';
 				}
 
-				$str.=$strHead.$this->setInput($name2,$opt).$strFoot;
+				$str.=$strHead;
+				$str.=$this->setHidden($name2,["value"=>null,"fixedValue"=>true]);
+				$str.=$this->setInput($name2,$opt);
+				$str.=$strFoot;
 
 				$ind++;
 
 		}
-		
+
 		return $str;
 
 	}
