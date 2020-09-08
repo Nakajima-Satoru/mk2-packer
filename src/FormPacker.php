@@ -21,6 +21,7 @@ class FormPacker extends Packer{
 	public static $tokenSalt="4049far3afjie7ep02Aar09f0g098a6r005hjFuf";
 	public static $errorMessage=[];
 	public static $_cssFramework=null;
+	public const CSRF_TOKEN="CSRFToken";
 
 	/**
 	 * __construct
@@ -55,11 +56,11 @@ class FormPacker extends Packer{
 	 */
 	public function verify(){
 		
-		if(empty(Request::$post["__token"])){
+		if(empty(Request::$post[self::CSRF_TOKEN])){
 			return false;
 		}
 
-		$targetToken=Request::$post["__token"];
+		$targetToken=Request::$post[self::CSRF_TOKEN];
 
 		$ref=getallheaders();
 
@@ -84,7 +85,7 @@ class FormPacker extends Packer{
 			return false;
 		}
 
-		unset(Request::$post["__token"]);
+		unset(Request::$post[self::CSRF_TOKEN]);
 		
 		return true;
 	}
@@ -537,7 +538,7 @@ class FormPackerUI extends FormPacker{
 	public function setTokenHidden($option=null){
 		$option["value"]=$this->setToken();
 		$option["fixedValue"]=true;
-		return $this->setHidden("__token",$option);
+		return $this->setHidden(self::CSRF_TOKEN,$option);
 	}
 
 	/**
@@ -680,48 +681,48 @@ class FormPackerUI extends FormPacker{
 		if(count($names)==1){
 			if($dataType=="object"){
 				if(isset($getData->{$names[0]})){
-					return $getData->{$names[0]};
+					return sanitize($getData->{$names[0]});
 				}
 			}
 			else if($dataType=="array"){
 				if(isset($getData[$names[0]])){
-					return $getData[$names[0]];
+					return sanitize($getData[$names[0]]);
 				}	
 			}
 		}
 		else if(count($names)==2){
 			if($dataType=="object"){
 				if(isset($getData->{$names[0]}->{$names[1]})){
-					return $getData->{$names[0]}->{$names[1]};
+					return sanitize($getData->{$names[0]}->{$names[1]});
 				}
 			}
 			else if($dataType=="array"){
 				if(isset($getData[$names[0]][$names[1]])){
-					return $getData[$names[0]][$names[1]];
+					return sanitize($getData[$names[0]][$names[1]]);
 				}
 			}
 		}
 		else if(count($names)==3){
 			if($dataType=="object"){
 				if(isset($getData->{$names[0]}->{$names[1]}->{$names[2]})){
-					return $getData->{$names[0]}->{$names[1]}->{$names[2]};
+					return sanitize($getData->{$names[0]}->{$names[1]}->{$names[2]});
 				}
 			}
 			else if($dataType=="array"){
 				if(isset($getData[$names[0]][$names[1]][$names[2]])){
-					return $getData[$names[0]][$names[1]][$names[2]];
+					return sanitize($getData[$names[0]][$names[1]][$names[2]]);
 				}	
 			}
 		}
 		else if(count($names)==4){
 			if($dataType=="object"){
 				if(isset($getData->{$names[0]}->{$names[1]}->{$names[2]}->{$names[3]})){
-					return $getData->{$names[0]}->{$names[1]}->{$names[2]}->{$names[3]};
+					return sanitize($getData->{$names[0]}->{$names[1]}->{$names[2]}->{$names[3]});
 				}
 			}
 			else if($dataType=="array"){
 				if(isset($getData[$names[0]][$names[1]][$names[2]][$names[3]])){
-					return $getData[$names[0]][$names[1]][$names[2]][$names[3]];
+					return sanitize($getData[$names[0]][$names[1]][$names[2]][$names[3]]);
 				}
 			}
 		}
