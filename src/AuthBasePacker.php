@@ -38,7 +38,7 @@ class AuthBasePacker extends Packer{
 	public function __construct($option){
 		parent::__construct($option);
 
-		$this->setPacker([
+		$this->Loading->Packer([
 			$this->getUsePackerClass("Session"),
 		]);
 
@@ -88,7 +88,7 @@ class AuthBasePacker extends Packer{
 		if(!empty($this->Packer->{$this->getUsePackerClass("Session")}->read($this->authName))){
 				
 			if($this->_convertUrl(Request::$params["url"])==$this->_convertUrl($this->redirect["login"])){
-				$this->redirect($this->redirect["logined"]);
+				$this->Response->redirect($this->redirect["logined"]);
 			}
 			else{
 
@@ -100,7 +100,7 @@ class AuthBasePacker extends Packer{
 
 				if($parityCode!=$authData["parityCode"]){
 					$this->Packer->{$this->getUsePackerClass("Session")}->delete($this->authName);
-					$this->redirect($this->redirect["login"]);
+					$this->Response->redirect($this->redirect["login"]);
 				}
 
 				return $authData["data"];
@@ -125,7 +125,7 @@ class AuthBasePacker extends Packer{
 				}
 
 				if(!$jugement){
-					$this->redirect($this->redirect["login"]);
+					$this->Response->redirect($this->redirect["login"]);
 				}
 			}
 
@@ -145,7 +145,7 @@ class AuthBasePacker extends Packer{
 	 */
 	private function _convertUrl($params){
 
-		$url=$this->getUrl($params);
+		$url=$this->Response->getUrl($params);
 		$url=explode("?",$url);
 		$url=$url[0];
 

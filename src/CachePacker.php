@@ -50,7 +50,7 @@ class CachePacker extends Packer{
 	public function __construct($option=null){
 		parent::__construct($option);
 
-		$this->setPacker([
+		$this->Loading->Packer([
 			$this->usePackerClass["Encrypt"],
 		]);
 

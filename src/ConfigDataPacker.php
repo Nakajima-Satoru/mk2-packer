@@ -47,7 +47,7 @@ class ConfigDataPacker extends Packer{
 	public function __construct(){
 		parent::__construct();
 
-		$this->setPacker([
+		$this->Loading->Packer([
 			$this->getUsePackerClass("Cache"),
 		]);
 
@@ -63,7 +63,7 @@ class ConfigDataPacker extends Packer{
 			// model setting
 			$table=$this->dbTable["table"];
 
-			$this->setTable($table);
+			$this->Loading->Table($table);
 			
 			$res=$this->Table->{$table}->select([
 				"type"=>"list",
@@ -93,7 +93,7 @@ class ConfigDataPacker extends Packer{
 		// model setting
 		$table=$this->dbTable["table"];
 
-		$this->setTable($table);
+		$this->Loading->Table($table);
 
 		try{
 
@@ -162,7 +162,7 @@ class ConfigDataPacker extends Packer{
 		// model setting
 		$table=$this->dbTable["table"];
 
-		$this->setTable($table);
+		$this->Loading->Table($table);
 
 		$this->Table->{$table}->delete()->allDel();
 

@@ -48,7 +48,7 @@ class PrivateApiPacker extends Packer{
 	public function __construct($option){
 		parent::__construct($option);
 
-		$this->setPacker([
+		$this->Loading->Packer([
 			$this->getUsePackerClass("Curl"),
 		]);
 

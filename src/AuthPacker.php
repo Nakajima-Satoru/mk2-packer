@@ -66,7 +66,7 @@ class AuthPacker extends AuthBasePacker{
 			return false;
 		}
 
-		$this->setTable([$this->dbTable["table"]]);
+		$this->Loading->Table([$this->dbTable["table"]]);
 
 		$obj=$this->Table->{$this->dbTable["table"]};
 
