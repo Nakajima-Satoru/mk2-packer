@@ -35,7 +35,7 @@ class EncryptPacker extends Packer{
 	public function encode($input,$option=[]){
 
 		if(is_array($input)){
-			$input=jsonEnc($input);
+			$input=json_encode($input);
 		}
 
 		$option=$this->_setOption($option);
@@ -72,8 +72,8 @@ class EncryptPacker extends Packer{
 		//decode
 		$decrypted=openssl_decrypt($input, $option["encType"], $option["password"], $options, $iv);
 
-		if(is_array(jsonDec($decrypted))){
-			$output=jsonDec($decrypted);
+		if(is_array(json_decode($decrypted,true))){
+			$output=json_decode($decrypted,true);
 		}
 		else
 		{

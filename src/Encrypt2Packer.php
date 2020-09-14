@@ -30,7 +30,7 @@ class Encrypt2Packer extends EncryptPacker{
 	public function encodePublicKey($input,$publicKey,$option=[]){
 
 		if(is_array($input)){
-			$input=jsonEnc($input);
+			$input=json_encode($input);
 		}
 
 		$option=$this->_setOption($option);
@@ -80,8 +80,8 @@ class Encrypt2Packer extends EncryptPacker{
 
 		openssl_private_decrypt($encrypted, $decrypted, $privateKey);
 
-		if(is_array(jsonDec($decrypted))){
-			$decrypted=jsonDec($decrypted);
+		if(is_array(json_decode($decrypted,true))){
+			$decrypted=json_decode($decrypted,true);
 		}
 
 		return $decrypted;
@@ -94,7 +94,7 @@ class Encrypt2Packer extends EncryptPacker{
 	public function encodePrivateKey($input,$privateKey,$option=[]){
 
 		if(is_array($input)){
-			$input=jsonEnc($input);
+			$input=json_encode($input);
 		}
 
 		$option=$this->_setOption($option);
@@ -144,8 +144,8 @@ class Encrypt2Packer extends EncryptPacker{
 
 		openssl_public_decrypt($encrypted, $decrypted, $publicKey);
 
-		if(is_array(jsonDec($decrypted))){
-			$decrypted=jsonDec($decrypted);
+		if(is_array(json_decode($decrypted,true))){
+			$decrypted=json_decode($decrypted,true);
 		}
 
 		return $decrypted;
