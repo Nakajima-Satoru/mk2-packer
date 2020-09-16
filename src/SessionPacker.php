@@ -24,6 +24,7 @@ class SessionPacker extends Packer{
 		"encType"=>"aes-256-cbc",
 		"hashNumber"=>"yodirog+aj23rf9Ad4ji3o7af98areaw52fa6gad",
 		"password"=>"msorig0ra90gfa47f80A3er6a485j10ivjorjfaUe2Fr9f0a8f9agafadfa1ga54r5e6a1",
+		"binaryOutput"=>true,
 	];
 
 	public $usePackerClass=[
