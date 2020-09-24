@@ -32,6 +32,30 @@ class AuthPacker extends AuthBasePacker{
 		],
 	];
 	
+	/*
+	public $bruteForceLimit=[
+		"retry"=>20,
+		"interval"=>14400,
+	];
+	*/
+
+	public $usePackerClass=[
+		"Session"=>"Session",
+		"Cache"=>"Cache",
+	];
+
+	
+	public function __construct($option){
+		parent::__construct($option);
+
+		$this->Loading->Packer([
+			$this->getUsePackerClass("Cache"),
+		]);
+
+		$this->Packer->{$this->getUsePackerClass("Cache")}->name="authbruteforceblock.".$this->authName;
+
+	}
+
 	/**
 	 * login
 	 */
@@ -63,6 +87,12 @@ class AuthPacker extends AuthBasePacker{
 		}
 
 		if(empty($post[$this->dbTable["password"]])){
+			return false;
+		}
+
+
+		// bruteForceLimitCheck
+		if(!$this->bruteForceLimitCheck()){
 			return false;
 		}
 
@@ -109,6 +139,7 @@ class AuthPacker extends AuthBasePacker{
 		unset($check->password);
 
 		if(!$check){
+			$this->bruteForceLimitAddCount();
 			return false;
 		}
 		else
@@ -157,4 +188,109 @@ class AuthPacker extends AuthBasePacker{
 		
 	}
 
+		
+	private function getUsePackerClass($name){
+
+		$buff=$this->usePackerClass[$name];
+
+		if(is_array($buff)){
+			return key($buff);
+		}
+		else{
+			return $buff;
+		}
+
+	}
+
+	public function bruteForceCheck(){
+		return $this->bruteForceLimitCheck();
+	}
+
+	public function bruteForceList(){
+
+		$getList=$this->Packer->{$this->getUsePackerClass("Cache")}->read();
+		if(!$getList){ return null; }
+
+		$output=[];
+		foreach($getList as $ip=>$g_){
+			$g_=json_decode($g_,true);
+			if(!empty($g_["blocked"])){
+				$output[$ip]=$g_["releaseDate"];
+			}
+		}
+		return $output;
+
+	}
+
+	public function bruteForceRelease($ipAddress){
+		$getList=$this->Packer->{$this->getUsePackerClass("Cache")}->delete($ipAddress);
+	}
+
+	private function bruteForceLimitCheck(){
+
+		if(
+			empty($this->bruteForceLimit["retry"]) ||
+			empty($this->bruteForceLimit["interval"])
+		){
+			return true;
+		}
+
+		$remoteIp=\mk2\core\Request::$params["option"]["remote"];
+		$readCache=$this->Packer->{$this->getUsePackerClass("Cache")}->read($remoteIp);
+		$readCache=json_decode($readCache,true);
+
+		if(!$readCache){
+			return true;
+		}
+
+		if(!empty($readCache["blocked"])){	
+			$nowDate=date_format(date_create("now"),"YmdHis");
+
+			if($nowDate>$readCache["releaseDate"]){			
+				$this->Packer->{$this->getUsePackerClass("Cache")}->delete($remoteIp);
+				return true;
+			}
+			return false;
+
+		}
+		else{
+
+
+			if($readCache["count"]<($this->bruteForceLimit["retry"]-1)){
+				return true;
+			}
+
+			$readCache=[
+				"blocked"=>true,
+				"releaseDate"=>date_format(date_create("+".$this->bruteForceLimit["interval"]." seconds"),"YmdHis"),
+			];
+			$readCache=json_encode($readCache);
+			$this->Packer->{$this->getUsePackerClass("Cache")}->write($remoteIp,$readCache);
+
+			return false;
+		}
+
+	}
+	private function bruteForceLimitAddCount(){
+
+		if(empty($this->bruteForceLimit)){
+			return true;
+		}
+		$remoteIp=\mk2\core\Request::$params["option"]["remote"];
+		$readCache=$this->Packer->{$this->getUsePackerClass("Cache")}->read($remoteIp);
+
+		$readCache=json_decode($readCache,true);
+
+		if(empty($readCache)){
+			$readCache=[
+				"count"=>0,
+			];
+		}
+
+		$readCache["count"]++;
+		$readCache=json_encode($readCache);
+
+		$this->Packer->{$this->getUsePackerClass("Cache")}->write($remoteIp,$readCache);
+
+	}
 }

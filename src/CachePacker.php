@@ -37,7 +37,6 @@ class CachePacker extends Packer{
 		"encType"=>"aes-256-cbc",
 		"hashNumber"=>"FIEROGF9230945FJIERG7f99fa0e9r8GIORg",
 		"password"=>"Ysfr9a08regpoiD980raejAIDorie0-9g8a",
-		"binaryOutput"=>true,
 	];
 	public $fileTmp=MK2_PATH_APP_TEMPORARY;
 
